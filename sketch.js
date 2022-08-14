@@ -1,6 +1,6 @@
 /*
 
-The Game Project 5 - Bring it all together
+The Game Project 7/8 - Make it awesome!
 
 */
 // -----------
@@ -44,7 +44,7 @@ var liveShapes;
 var lives;
 var tryAgain;
 var replay;
-
+var platforms;
 // ---------------
 // Water animation
 // ---------------
@@ -95,6 +95,10 @@ function draw() {
   drawMountains();
 
   drawTrees();
+
+  for (let i = 0; i < platforms.length; i++) {
+    platforms[i].draw();
+  }
 
   // Draw canyon and check if player falls in canyon.
   for (var i = 0; i < canyons.length; i++) {
@@ -1051,16 +1055,23 @@ function moveGameChar() {
       // stop the player from holding the space bar to float in the air
       isFalling = false;
     }
-    // draw character jumping facing forward if he is higher than the ground
-    if (gameChar_y < floorPos_y) {
-      isJumping = true;
-    }
   }
 
   // Make the character fall if above the ground. - Gravity
   if (gameChar_y < floorPos_y) {
+    //var isContact = false;
+    for (let i = 0; i < platforms.length; i++) {
+      if (platforms[i].checkContact(gameChar_world_x, gameChar_y)) {
+        //isContact = true;
+        //break;
+        gameChar_y = platforms[i].y - 90;
+        break;
+      }
+    }
+    // isJumping = true;
     gameChar_y += 4;
   }
+  console.log(isFalling);
   // Make the character fall faster if it's in the canyon.
   if (isPlummeting) {
     gameChar_y += 12;
@@ -1779,16 +1790,6 @@ function startGame() {
   // Variable for cabin y position.
   cabin_y = 20;
 
-  // Each water animation requires it's own array and cycle count.
-  // Arrays to store water animation frames.
-  water_array = [[], [], []];
-  // Count to cycle through water array.
-  water_cycle = [0, 0, 0];
-  // Function to create array of water animation frames.
-  for (var i = 0; i < water_array.length; i++) {
-    createWaterImgArray(water_array[i]);
-  }
-
   // Initialise arrays of background/foreground objects.
   trees_x = [230, 530, 740, 1080, 1380];
 
@@ -1930,6 +1931,23 @@ function startGame() {
       width: 80,
     },
   ];
+
+  platforms = [];
+
+  platforms.push(createPlatforms(500, floorPos_y - 100, 100));
+
+  // Each water animation requires it's own array and cycle count.
+  // Arrays to store water animation frames.
+  water_array = [];
+  water_cycle = [];
+  for (let i = 0; i < canyons.length; i++) {
+    water_array.push([]);
+    water_cycle.push(0);
+  }
+  // Function to create array of water animation frames.
+  for (var i = 0; i < water_array.length; i++) {
+    createWaterImgArray(water_array[i]);
+  }
 
   collectables = [
     {
@@ -2094,4 +2112,26 @@ function playAgain() {
   for (var i = 0; i < collectables.length; i++) {
     collectables[i].isFound = false;
   }
+}
+
+function createPlatforms(x, y, length) {
+  var p = {
+    x: x,
+    y: y,
+    length: length,
+    draw: function () {
+      fill(255, 0, 255);
+      rect(this.x, this.y, this.length, 20);
+    },
+    checkContact: function (gc_x, gc_y) {
+      if (gc_x > this.x && gc_x < this.x + this.length) {
+        var d = this.y - gc_y;
+        if (d >= 0 && d < 5) {
+          return true;
+        }
+      }
+      return false;
+    },
+  };
+  return p;
 }
