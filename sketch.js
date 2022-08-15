@@ -20,11 +20,11 @@ var isLeft;
 var isRight;
 var isFalling;
 var isPlummeting;
-var isJumpRight;
-var isJumpLeft;
-var isJumping;
-var walkLeftCycle;
-var walkRightCycle;
+// var isJumpRight;
+// var isJumpLeft;
+// var isJumping;
+// var walkLeftCycle;
+// var walkRightCycle;
 
 // ------------------
 // Background objects
@@ -189,18 +189,20 @@ function keyPressed() {
 
   // space bar
   if (keyCode == 32 || keyCode == 231 || keyCode == 0) {
-    isFalling = true;
+    if (!isFalling) {
+      gameChar_y -= 100;
+    }
   }
 
-  // So the player can't repeatedly push the space button to stay in the air
-  if (gameChar_y < floorPos_y) {
-    isFalling = false;
-  }
-  // So the player can't repeatedly push the space button to stay in the air
-  // when falling down the canyon
-  if (gameChar_y > floorPos_y + 2) {
-    isFalling = false;
-  }
+  //   // So the player can't repeatedly push the space button to stay in the air
+  //   if (gameChar_y < floorPos_y) {
+  //     isFalling = false;
+  //   }
+  //   // So the player can't repeatedly push the space button to stay in the air
+  //   // when falling down the canyon
+  //   if (gameChar_y > floorPos_y + 2) {
+  //     isFalling = false;
+  //   }
 }
 
 function keyReleased() {
@@ -212,11 +214,6 @@ function keyReleased() {
   // right arrow
   if (keyCode == 39) {
     isRight = false;
-  }
-
-  // space bar
-  if (keyCode == 32 || keyCode == 231 || keyCode == 0) {
-    isFalling = false;
   }
 }
 
@@ -232,743 +229,126 @@ function mouseClicked() {
 // ------------------------------
 
 function drawGameChar() {
-  if (isJumpLeft) {
-    // jumping-left
-    // char_head
-    fill("#ff296d");
-    rect(gameChar_x - 10, gameChar_y - 75, 20, 30);
-    // char_eyes
-    fill("#d1f9ff");
-    ellipse(gameChar_x - 8, gameChar_y - 65, 5, 15);
-    fill("#010014");
-    ellipse(gameChar_x - 8, gameChar_y - 65, 4, 12);
-    // char_mouth
-    ellipse(gameChar_x - 8.5, gameChar_y - 53, 2, 5);
-    // char_neck
-    fill("#ff296d");
-    rect(gameChar_x - 2, gameChar_y - 45, 4, 2);
-    // char_shirt
-    fill("#1490b3");
-    rect(gameChar_x - 5, gameChar_y - 43, 10, 20);
-    // sleeves
-    rect(gameChar_x + 5, gameChar_y - 43, 6, 6, 2);
-    // char_shorts
-    fill("#010014");
-    rect(gameChar_x - 5, gameChar_y - 23, 10, 13);
-    rect(gameChar_x - 13, gameChar_y - 23, 8, 8);
-    // char_right_arm
-    fill("#ff296d");
-    rect(gameChar_x + 11, gameChar_y - 41, 8, 3);
-    rect(gameChar_x + 19, gameChar_y - 41, 3, 9);
-    rect(gameChar_x + 18, gameChar_y - 32, 5, 4);
-    // char_left_arm
-    rect(gameChar_x - 15, gameChar_y - 41, 10, 3);
-    rect(gameChar_x - 15, gameChar_y - 50, 3, 9);
-    rect(gameChar_x - 16, gameChar_y - 54, 5, 4);
-    //char_leg
-    rect(gameChar_x - 17, gameChar_y - 21, 4, 5);
-    rect(gameChar_x - 17, gameChar_y - 16, 4, 5);
-    rect(gameChar_x - 2.5, gameChar_y - 10, 4, 8);
-    rect(gameChar_x + 1.5, gameChar_y - 6, 5, 4);
-    // char_shoe
-    fill("#010014");
-    rect(gameChar_x + 6, gameChar_y - 6, 5, 8);
-    rect(gameChar_x - 21, gameChar_y - 11, 8, 5);
-  } else if (isJumpRight) {
+  if (isLeft && isFalling) {
     // jumping-right
-    // char_head
-    fill("#ff296d");
-    rect(gameChar_x - 10, gameChar_y - 75, 20, 30);
-    // char_eyes
-    fill("#d1f9ff");
-    ellipse(gameChar_x + 8, gameChar_y - 65, 5, 15);
-    fill("#010014");
-    ellipse(gameChar_x + 8, gameChar_y - 65, 4, 12);
-    // char_mouth
-    ellipse(gameChar_x + 8.5, gameChar_y - 53, 2, 5);
-    // char_neck
-    fill("#ff296d");
-    rect(gameChar_x - 2, gameChar_y - 45, 4, 2);
-    // char_shirt
-    fill("#1490b3");
-    rect(gameChar_x - 5, gameChar_y - 43, 10, 20);
-    // sleeves
-    rect(gameChar_x - 11, gameChar_y - 43, 6, 6, 2);
-    // char_shorts
-    fill("#010014");
-    rect(gameChar_x - 5, gameChar_y - 23, 10, 13);
-    rect(gameChar_x + 5, gameChar_y - 23, 8, 8);
-    // char_right_arm
-    fill("#ff296d");
-    rect(gameChar_x - 20, gameChar_y - 41, 9, 3);
-    rect(gameChar_x - 20, gameChar_y - 41, 3, 9);
-    rect(gameChar_x - 21, gameChar_y - 32, 5, 4);
-    // char_left_arm
-    rect(gameChar_x + 5, gameChar_y - 41, 10, 3);
-    rect(gameChar_x + 12, gameChar_y - 50, 3, 9);
-    rect(gameChar_x + 11, gameChar_y - 54, 5, 4);
-    //char_leg
-    rect(gameChar_x + 13, gameChar_y - 21, 4, 5);
-    rect(gameChar_x + 13, gameChar_y - 16, 4, 5);
-    rect(gameChar_x - 2.5, gameChar_y - 10, 4, 8);
-    rect(gameChar_x - 7.5, gameChar_y - 6, 5, 4);
-    // char_shoe
-    fill("#010014");
-    rect(gameChar_x - 12, gameChar_y - 6, 5, 8);
-    rect(gameChar_x + 13, gameChar_y - 11, 8, 5);
+    fill("#98D936");
+    rect(gameChar_x - 18, gameChar_y - 67, 38, 60, 5, 20, 5, 20);
+    beginShape();
+    curveVertex(gameChar_x - 4, gameChar_y - 7);
+    curveVertex(gameChar_x - 4, gameChar_y - 7);
+    curveVertex(gameChar_x + 4, gameChar_y - 2);
+    curveVertex(gameChar_x + 8, gameChar_y - 2);
+    curveVertex(gameChar_x + 16, gameChar_y - 7);
+    curveVertex(gameChar_x + 16, gameChar_y - 7);
+    endShape();
+    fill("#F2ECE4");
+    ellipse(gameChar_x - 15, gameChar_y - 44, 7, 20);
+    fill("#01261C");
+    ellipse(gameChar_x - 16, gameChar_y - 44, 5, 17);
+  } else if (isRight && isFalling) {
+    // jumping-left
+    fill("#98D936");
+    rect(gameChar_x - 18, gameChar_y - 67, 38, 60, 20, 5, 20, 5);
+    beginShape();
+    curveVertex(gameChar_x + 4, gameChar_y - 7);
+    curveVertex(gameChar_x + 4, gameChar_y - 7);
+    curveVertex(gameChar_x - 4, gameChar_y - 2);
+    curveVertex(gameChar_x - 8, gameChar_y - 2);
+    curveVertex(gameChar_x - 16, gameChar_y - 7);
+    curveVertex(gameChar_x - 16, gameChar_y - 7);
+    endShape();
+    fill("#F2ECE4");
+    ellipse(gameChar_x + 15, gameChar_y - 44, 7, 20);
+    fill("#01261C");
+    ellipse(gameChar_x + 16, gameChar_y - 44, 5, 17);
   } else if (isLeft) {
-    // walking left animation
-    switch (walkLeftCycle) {
-      case 0:
-        // char_head
-        fill("#ff296d");
-        rect(gameChar_x - 10, gameChar_y - 75, 20, 30);
-        // char_eyes
-        fill("#d1f9ff");
-        ellipse(gameChar_x - 8, gameChar_y - 65, 5, 15);
-        fill("#010014");
-        ellipse(gameChar_x - 8, gameChar_y - 65, 4, 12);
-        // char_mouth
-        stroke("#010014");
-        line(gameChar_x - 9, gameChar_y - 53, gameChar_x - 4, gameChar_y - 53);
-        noStroke();
-        // char_neck
-        fill("#ff296d");
-        rect(gameChar_x - 2, gameChar_y - 45, 4, 2);
-        // char_shirt
-        fill("#1490b3");
-        rect(gameChar_x - 5, gameChar_y - 43, 10, 20);
-        // char_shorts
-        fill("#010014");
-        rect(gameChar_x - 5, gameChar_y - 23, 10, 13);
-        // arms
-        stroke("#ff296d"); // RED
-        strokeWeight(3);
-        line(gameChar_x, gameChar_y - 38, gameChar_x + 11, gameChar_y - 42);
-        line(
-          gameChar_x + 11,
-          gameChar_y - 42,
-          gameChar_x + 11,
-          gameChar_y - 35
-        );
-        line(gameChar_x - 4, gameChar_y - 42, gameChar_x - 10, gameChar_y - 39);
-        line(
-          gameChar_x - 10,
-          gameChar_y - 39,
-          gameChar_x - 12,
-          gameChar_y - 46
-        );
-        noStroke();
-        strokeWeight(1);
-        // hands
-        fill("#ff296d"); // RED
-        rect(gameChar_x + 9, gameChar_y - 35, 5, 4);
-        rect(gameChar_x - 15, gameChar_y - 48, 5, 4);
-        //char_leg
-        stroke("#ff296d"); // RED
-        strokeWeight(3);
-        line(gameChar_x + 3, gameChar_y - 9, gameChar_x + 4, gameChar_y - 5);
-        line(gameChar_x + 4, gameChar_y - 5, gameChar_x + 10, gameChar_y - 7);
-        line(gameChar_x - 1, gameChar_y - 10, gameChar_x - 6, gameChar_y - 7);
-        line(gameChar_x - 6, gameChar_y - 7, gameChar_x - 2, gameChar_y - 2);
-        noStroke();
-        // char_shoe
-        fill("#010014");
-        rect(gameChar_x + 12, gameChar_y - 8, 5, 8);
-        rect(gameChar_x - 8, gameChar_y - 3, 8, 5);
-        walkLeftCycle += 1;
-        break;
-      case 1:
-        // char_head
-        fill("#ff296d");
-        rect(gameChar_x - 10, gameChar_y - 75, 20, 30);
-        // char_eyes
-        fill("#d1f9ff");
-        ellipse(gameChar_x - 8, gameChar_y - 65, 5, 15);
-        fill("#010014");
-        ellipse(gameChar_x - 8, gameChar_y - 65, 4, 12);
-        // char_mouth
-        stroke("#010014");
-        line(gameChar_x - 9, gameChar_y - 53, gameChar_x - 4, gameChar_y - 53);
-        noStroke();
-        // char_neck
-        fill("#ff296d");
-        rect(gameChar_x - 2, gameChar_y - 45, 4, 2);
-        // char_shirt
-        fill("#1490b3");
-        rect(gameChar_x - 5, gameChar_y - 43, 10, 20);
-        // char_shorts
-        fill("#010014");
-        rect(gameChar_x - 5, gameChar_y - 23, 10, 13);
-        // arms
-        stroke("#ff296d"); // RED
-        strokeWeight(3);
-        line(gameChar_x, gameChar_y - 38, gameChar_x + 7, gameChar_y - 30);
-        line(gameChar_x + 7, gameChar_y - 30, gameChar_x - 3, gameChar_y - 28);
-        line(gameChar_x - 4, gameChar_y - 31, gameChar_x - 10, gameChar_y - 35);
-        noStroke();
-        strokeWeight(1);
-        // hands
-        fill("#ff296d"); // RED
-        rect(gameChar_x - 8, gameChar_y - 29, 5, 4);
-        rect(gameChar_x - 13, gameChar_y - 38, 5, 4);
-        //char_leg
-        stroke("#ff296d"); // RED
-        strokeWeight(3);
-        line(gameChar_x - 1.5, gameChar_y - 10, gameChar_x + 8, gameChar_y - 7);
-        line(gameChar_x - 1, gameChar_y - 10, gameChar_x + 1, gameChar_y - 3);
-        noStroke();
-        // char_shoe
-        fill("#010014");
-        rect(gameChar_x + 9, gameChar_y - 8, 5, 8);
-        rect(gameChar_x - 4, gameChar_y - 3, 8, 5);
-        walkLeftCycle += 1;
-        break;
-      case 2:
-        // char_head
-        fill("#ff296d");
-        rect(gameChar_x - 10, gameChar_y - 75, 20, 30);
-        // char_eyes
-        fill("#d1f9ff");
-        ellipse(gameChar_x - 8, gameChar_y - 65, 5, 15);
-        fill("#010014");
-        ellipse(gameChar_x - 8, gameChar_y - 65, 4, 12);
-        // char_mouth
-        stroke("#010014");
-        line(gameChar_x - 9, gameChar_y - 53, gameChar_x - 4, gameChar_y - 53);
-        noStroke();
-        // char_neck
-        fill("#ff296d");
-        rect(gameChar_x - 2, gameChar_y - 45, 4, 2);
-        // char_shirt
-        fill("#1490b3");
-        rect(gameChar_x - 5, gameChar_y - 43, 10, 20);
-        // char_shorts
-        fill("#010014");
-        rect(gameChar_x - 5, gameChar_y - 23, 10, 13);
-        // arms
-        stroke("#ff296d"); // RED
-        strokeWeight(3);
-        line(gameChar_x, gameChar_y - 38, gameChar_x + 8, gameChar_y - 32);
-        line(gameChar_x + 8, gameChar_y - 32, gameChar_x, gameChar_y - 24);
-        line(gameChar_x - 4, gameChar_y - 42, gameChar_x - 10, gameChar_y - 35);
-        line(
-          gameChar_x - 10,
-          gameChar_y - 35,
-          gameChar_x - 15,
-          gameChar_y - 46
-        );
-        noStroke();
-        fill("#ff296d"); // RED
-        // hands
-        rect(gameChar_x - 4, gameChar_y - 24, 5, 4);
-        rect(gameChar_x - 17, gameChar_y - 48, 5, 4);
-        //char_leg
-        stroke("#ff296d"); // RED
-        line(gameChar_x + 2, gameChar_y - 9, gameChar_x + 6, gameChar_y - 2);
-        line(gameChar_x - 1, gameChar_y - 9, gameChar_x - 6, gameChar_y - 7);
-        line(gameChar_x - 6, gameChar_y - 7, gameChar_x - 4, gameChar_y - 4);
-        noStroke();
-        strokeWeight(1);
-        // char_shoe
-        fill("#010014"); // DARK BLUE
-        rect(gameChar_x - 9, gameChar_y - 2, 8, 5);
-        rect(gameChar_x, gameChar_y - 2, 8, 5);
-        walkLeftCycle += 1;
-        break;
-      case 3:
-        // char_head
-        fill("#ff296d"); // RED
-        rect(gameChar_x - 10, gameChar_y - 75, 20, 30);
-        // char_eyes
-        fill("#d1f9ff"); // GREY
-        ellipse(gameChar_x - 8, gameChar_y - 65, 5, 15);
-        fill("#010014"); // DARK BLUE
-        ellipse(gameChar_x - 8, gameChar_y - 65, 4, 12);
-        // char_mouth
-        stroke("#010014");
-        line(gameChar_x - 10, gameChar_y - 53, gameChar_x - 5, gameChar_y - 53);
-        noStroke();
-        // char_neck
-        fill("#ff296d"); // RED
-        rect(gameChar_x - 2, gameChar_y - 45, 4, 2);
-        // char_shirt
-        fill("#1490b3");
-        rect(gameChar_x - 5, gameChar_y - 43, 10, 20);
-        // char_shorts
-        fill("#010014"); // DARK BLUE
-        rect(gameChar_x - 5, gameChar_y - 23, 10, 13);
-        // arms
-        stroke("#ff296d"); // RED
-        strokeWeight(3);
-        line(gameChar_x, gameChar_y - 39, gameChar_x + 10, gameChar_y - 34);
-        line(gameChar_x + 10, gameChar_y - 34, gameChar_x + 7, gameChar_y - 24);
-        line(gameChar_x - 4, gameChar_y - 42, gameChar_x - 10, gameChar_y - 35);
-        line(
-          gameChar_x - 10,
-          gameChar_y - 35,
-          gameChar_x - 17,
-          gameChar_y - 46
-        );
-        noStroke();
-        fill("#ff296d"); // RED
-        // hands
-        rect(gameChar_x + 5, gameChar_y - 24, 5, 4);
-        rect(gameChar_x - 18, gameChar_y - 48, 5, 4);
-        //char_leg
-        stroke("#ff296d"); // RED
-        line(gameChar_x + 2, gameChar_y - 9, gameChar_x + 3, gameChar_y - 5);
-        line(gameChar_x + 3, gameChar_y - 5, gameChar_x + 6, gameChar_y - 4);
-        line(gameChar_x - 1, gameChar_y - 9, gameChar_x - 6, gameChar_y - 7);
-        line(gameChar_x - 6, gameChar_y - 7, gameChar_x - 6, gameChar_y - 4);
-        noStroke();
-        strokeWeight(1);
-        // char_shoe
-        fill("#010014"); // DARK BLUE
-        rect(gameChar_x - 12, gameChar_y - 2, 8, 5);
-        rect(gameChar_x + 8, gameChar_y - 6, 5, 8);
-        walkLeftCycle += 1;
-        break;
-      default: // RED
-        // GREY
-        // DARK BLUE
-        // RED
-        // DARK BLUE
-        // RED
-        // RED
-        // RED
-        // DARK BLUE
-        // char_head
-        fill("#ff296d");
-        rect(gameChar_x - 10, gameChar_y - 75, 20, 30);
-        // char_eyes
-        fill("#d1f9ff");
-        ellipse(gameChar_x - 8, gameChar_y - 65, 5, 15);
-        fill("#010014");
-        ellipse(gameChar_x - 8, gameChar_y - 65, 4, 12);
-        // char_mouth
-        stroke("#010014");
-        line(gameChar_x - 10, gameChar_y - 53, gameChar_x - 5, gameChar_y - 53);
-        noStroke();
-        // char_neck
-        fill("#ff296d");
-        rect(gameChar_x - 2, gameChar_y - 45, 4, 2);
-        // char_shirt
-        fill("#1490b3");
-        rect(gameChar_x - 5, gameChar_y - 43, 10, 20);
-        // char_shorts
-        fill("#010014");
-        rect(gameChar_x - 5, gameChar_y - 23, 10, 13);
-        // arms
-        stroke("#ff296d");
-        strokeWeight(3);
-        line(gameChar_x, gameChar_y - 39, gameChar_x + 10, gameChar_y - 38);
-        line(gameChar_x + 10, gameChar_y - 38, gameChar_x + 9, gameChar_y - 28);
-        line(gameChar_x - 4, gameChar_y - 42, gameChar_x - 7, gameChar_y - 35);
-        line(gameChar_x - 7, gameChar_y - 35, gameChar_x - 14, gameChar_y - 46);
-        noStroke();
-        fill("#ff296d");
-        // hands
-        rect(gameChar_x + 7, gameChar_y - 28, 5, 4);
-        rect(gameChar_x - 15, gameChar_y - 47, 5, 4);
-        //char_leg
-        stroke("#ff296d");
-        line(gameChar_x + 2, gameChar_y - 9, gameChar_x + 3, gameChar_y - 5);
-        line(gameChar_x + 3, gameChar_y - 5, gameChar_x + 7, gameChar_y - 6);
-        line(gameChar_x - 1, gameChar_y - 9, gameChar_x - 6, gameChar_y - 2);
-        noStroke();
-        // char_shoe
-        fill("#010014");
-        rect(gameChar_x - 12, gameChar_y - 2, 8, 5);
-        rect(gameChar_x + 9, gameChar_y - 8, 5, 8);
-        walkLeftCycle = 0;
-        break;
-    }
+    fill("#98D936");
+    rect(gameChar_x - 18, gameChar_y - 57, 38, 60, 5, 20, 5, 20);
+    fill("#F2ECE4");
+    ellipse(gameChar_x - 15, gameChar_y - 34, 7, 20);
+    fill("#01261C");
+    ellipse(gameChar_x - 16, gameChar_y - 34, 5, 17);
   } else if (isRight) {
-    // walking right animation
-    switch (walkRightCycle) {
-      case 0:
-        // char_head
-        fill("#ff296d");
-        rect(gameChar_x - 10, gameChar_y - 75, 20, 30);
-        // char_eyes
-        fill("#d1f9ff");
-        ellipse(gameChar_x + 8, gameChar_y - 65, 5, 15);
-        fill("#010014");
-        ellipse(gameChar_x + 8, gameChar_y - 65, 4, 12);
-        // char_mouth
-        stroke("#010014");
-        line(gameChar_x + 9, gameChar_y - 53, gameChar_x + 4, gameChar_y - 53);
-        noStroke();
-        // char_neck
-        fill("#ff296d");
-        rect(gameChar_x - 2, gameChar_y - 45, 4, 2);
-        // char_shirt
-        fill("#1490b3");
-        rect(gameChar_x - 5, gameChar_y - 43, 10, 20);
-        // char_shorts
-        fill("#010014");
-        rect(gameChar_x - 5, gameChar_y - 23, 10, 13);
-        // arms
-        stroke("#ff296d"); // RED
-        strokeWeight(3);
-        line(gameChar_x, gameChar_y - 38, gameChar_x - 11, gameChar_y - 42);
-        line(
-          gameChar_x - 11,
-          gameChar_y - 42,
-          gameChar_x - 11,
-          gameChar_y - 35
-        );
-        line(gameChar_x + 4, gameChar_y - 42, gameChar_x + 10, gameChar_y - 39);
-        line(
-          gameChar_x + 10,
-          gameChar_y - 39,
-          gameChar_x + 12,
-          gameChar_y - 46
-        );
-        noStroke();
-        strokeWeight(1);
-        // hands
-        fill("#ff296d"); // RED
-        rect(gameChar_x - 13, gameChar_y - 35, 5, 4);
-        rect(gameChar_x + 10, gameChar_y - 48, 5, 4);
-        //char_leg
-        stroke("#ff296d"); // RED
-        strokeWeight(3);
-        line(gameChar_x - 3, gameChar_y - 9, gameChar_x - 4, gameChar_y - 5);
-        line(gameChar_x - 4, gameChar_y - 5, gameChar_x - 10, gameChar_y - 7);
-        line(gameChar_x + 1, gameChar_y - 10, gameChar_x + 6, gameChar_y - 7);
-        line(gameChar_x + 6, gameChar_y - 7, gameChar_x + 2, gameChar_y - 2);
-        noStroke();
-        // char_shoe
-        fill("#010014");
-        rect(gameChar_x - 14, gameChar_y - 8, 5, 8);
-        rect(gameChar_x + 1, gameChar_y - 3, 8, 5);
-        walkRightCycle += 1;
-        break;
-      case 1:
-        // char_head
-        fill("#ff296d");
-        rect(gameChar_x - 10, gameChar_y - 75, 20, 30);
-        // char_eyes
-        fill("#d1f9ff");
-        ellipse(gameChar_x + 8, gameChar_y - 65, 5, 15);
-        fill("#010014");
-        ellipse(gameChar_x + 8, gameChar_y - 65, 4, 12);
-        // char_mouth
-        stroke("#010014");
-        line(gameChar_x + 9, gameChar_y - 53, gameChar_x + 4, gameChar_y - 53);
-        noStroke();
-        // char_neck
-        fill("#ff296d");
-        rect(gameChar_x - 2, gameChar_y - 45, 4, 2);
-        // char_shirt
-        fill("#1490b3");
-        rect(gameChar_x - 5, gameChar_y - 43, 10, 20);
-        // char_shorts
-        fill("#010014");
-        rect(gameChar_x - 5, gameChar_y - 23, 10, 13);
-        // arms
-        stroke("#ff296d"); // RED
-        strokeWeight(3);
-        line(gameChar_x, gameChar_y - 38, gameChar_x - 7, gameChar_y - 30);
-        line(gameChar_x - 7, gameChar_y - 30, gameChar_x + 3, gameChar_y - 28);
-        line(gameChar_x + 4, gameChar_y - 31, gameChar_x + 10, gameChar_y - 35);
-        noStroke();
-        strokeWeight(1);
-        // hands
-        fill("#ff296d"); // RED
-        rect(gameChar_x + 4, gameChar_y - 28, 5, 4);
-        rect(gameChar_x + 9, gameChar_y - 38, 5, 4);
-        //char_leg
-        stroke("#ff296d"); // RED
-        strokeWeight(3);
-        line(gameChar_x + 1.5, gameChar_y - 10, gameChar_x - 8, gameChar_y - 7);
-        line(gameChar_x + 1, gameChar_y - 10, gameChar_x - 1, gameChar_y - 3);
-        noStroke();
-        // char_shoe
-        fill("#010014");
-        rect(gameChar_x - 13, gameChar_y - 8, 5, 8);
-        rect(gameChar_x - 2, gameChar_y - 3, 8, 5);
-        walkRightCycle += 1;
-        break;
-      case 2:
-        // char_head
-        fill("#ff296d");
-        rect(gameChar_x - 10, gameChar_y - 75, 20, 30);
-        // char_eyes
-        fill("#d1f9ff");
-        ellipse(gameChar_x + 8, gameChar_y - 65, 5, 15);
-        fill("#010014");
-        ellipse(gameChar_x + 8, gameChar_y - 65, 4, 12);
-        // char_mouth
-        stroke("#010014");
-        line(gameChar_x + 9, gameChar_y - 53, gameChar_x + 4, gameChar_y - 53);
-        noStroke();
-        // char_neck
-        fill("#ff296d");
-        rect(gameChar_x - 2, gameChar_y - 45, 4, 2);
-        // char_shirt
-        fill("#1490b3");
-        rect(gameChar_x - 5, gameChar_y - 43, 10, 20);
-        // char_shorts
-        fill("#010014");
-        rect(gameChar_x - 5, gameChar_y - 23, 10, 13);
-        // arms
-        stroke("#ff296d"); // RED
-        strokeWeight(3);
-        line(gameChar_x, gameChar_y - 38, gameChar_x - 8, gameChar_y - 32);
-        line(gameChar_x - 8, gameChar_y - 32, gameChar_x, gameChar_y - 24);
-        line(gameChar_x + 4, gameChar_y - 42, gameChar_x + 10, gameChar_y - 35);
-        line(
-          gameChar_x + 10,
-          gameChar_y - 35,
-          gameChar_x + 15,
-          gameChar_y - 46
-        );
-        noStroke();
-        fill("#ff296d"); // RED
-        // hands
-        rect(gameChar_x, gameChar_y - 24, 5, 4);
-        rect(gameChar_x + 13, gameChar_y - 48, 5, 4);
-        //char_leg
-        stroke("#ff296d"); // RED
-        line(gameChar_x - 2, gameChar_y - 9, gameChar_x - 6, gameChar_y - 2);
-        line(gameChar_x + 1, gameChar_y - 9, gameChar_x + 6, gameChar_y - 7);
-        line(gameChar_x + 6, gameChar_y - 7, gameChar_x + 4, gameChar_y - 4);
-        noStroke();
-        strokeWeight(1);
-        // char_shoe
-        fill("#010014"); // DARK BLUE
-        rect(gameChar_x + 3, gameChar_y - 2, 8, 5);
-        rect(gameChar_x - 7, gameChar_y - 2, 8, 5);
-        walkRightCycle += 1;
-        break;
-      case 3:
-        // char_head
-        fill("#ff296d");
-        rect(gameChar_x - 10, gameChar_y - 75, 20, 30);
-        // char_eyes
-        fill("#d1f9ff");
-        ellipse(gameChar_x + 8, gameChar_y - 65, 5, 15);
-        fill("#010014");
-        ellipse(gameChar_x + 8, gameChar_y - 65, 4, 12);
-        // char_mouth
-        stroke("#010014");
-        line(gameChar_x + 9, gameChar_y - 53, gameChar_x + 4, gameChar_y - 53);
-        noStroke();
-        // char_neck
-        fill("#ff296d");
-        rect(gameChar_x - 2, gameChar_y - 45, 4, 2);
-        // char_shirt
-        fill("#1490b3");
-        rect(gameChar_x - 5, gameChar_y - 43, 10, 20);
-        // char_shorts
-        fill("#010014");
-        rect(gameChar_x - 5, gameChar_y - 23, 10, 13);
-        // arms
-        stroke("#ff296d"); // RED
-        strokeWeight(3);
-        line(gameChar_x, gameChar_y - 39, gameChar_x - 10, gameChar_y - 34);
-        line(gameChar_x - 10, gameChar_y - 34, gameChar_x - 7, gameChar_y - 24);
-        line(gameChar_x + 4, gameChar_y - 42, gameChar_x + 10, gameChar_y - 35);
-        line(
-          gameChar_x + 10,
-          gameChar_y - 35,
-          gameChar_x + 17,
-          gameChar_y - 46
-        );
-        noStroke();
-        fill("#ff296d"); // RED
-        // hands
-        rect(gameChar_x - 9, gameChar_y - 24, 5, 4);
-        rect(gameChar_x + 15, gameChar_y - 48, 5, 4);
-        //char_leg
-        stroke("#ff296d"); // RED
-        line(gameChar_x - 2, gameChar_y - 9, gameChar_x - 3, gameChar_y - 5);
-        line(gameChar_x - 3, gameChar_y - 5, gameChar_x - 6, gameChar_y - 4);
-        line(gameChar_x + 1, gameChar_y - 9, gameChar_x + 6, gameChar_y - 7);
-        line(gameChar_x + 6, gameChar_y - 7, gameChar_x + 6, gameChar_y - 4);
-        noStroke();
-        strokeWeight(1);
-        // char_shoe
-        fill("#010014"); // DARK BLUE
-        rect(gameChar_x + 5, gameChar_y - 2, 8, 5);
-        rect(gameChar_x - 12, gameChar_y - 6, 5, 8);
-        walkRightCycle += 1;
-        break;
-      default:
-        // char_head
-        fill("#ff296d");
-        rect(gameChar_x - 10, gameChar_y - 75, 20, 30);
-        // char_eyes
-        fill("#d1f9ff");
-        ellipse(gameChar_x + 8, gameChar_y - 65, 5, 15);
-        fill("#010014");
-        ellipse(gameChar_x + 8, gameChar_y - 65, 4, 12);
-        // char_mouth
-        stroke("#010014");
-        line(gameChar_x + 9, gameChar_y - 53, gameChar_x + 4, gameChar_y - 53);
-        noStroke();
-        // char_neck
-        fill("#ff296d");
-        rect(gameChar_x - 2, gameChar_y - 45, 4, 2);
-        // char_shirt
-        fill("#1490b3");
-        rect(gameChar_x - 5, gameChar_y - 43, 10, 20);
-        // char_shorts
-        fill("#010014");
-        rect(gameChar_x - 5, gameChar_y - 23, 10, 13);
-        // arms
-        stroke("#ff296d");
-        strokeWeight(3);
-        line(gameChar_x, gameChar_y - 39, gameChar_x - 10, gameChar_y - 38);
-        line(gameChar_x - 10, gameChar_y - 38, gameChar_x - 9, gameChar_y - 28);
-        line(gameChar_x + 4, gameChar_y - 42, gameChar_x + 7, gameChar_y - 35);
-        line(gameChar_x + 7, gameChar_y - 35, gameChar_x + 14, gameChar_y - 46);
-        noStroke();
-        fill("#ff296d");
-        // hands
-        rect(gameChar_x - 11, gameChar_y - 28, 5, 4);
-        rect(gameChar_x + 12, gameChar_y - 47, 5, 4);
-        //char_leg
-        stroke("#ff296d");
-        line(gameChar_x - 2, gameChar_y - 9, gameChar_x - 3, gameChar_y - 5);
-        line(gameChar_x - 3, gameChar_y - 5, gameChar_x - 7, gameChar_y - 6);
-        line(gameChar_x + 1, gameChar_y - 9, gameChar_x + 6, gameChar_y - 2);
-        noStroke();
-        strokeWeight(1);
-        // char_shoe
-        fill("#010014");
-        rect(gameChar_x + 5, gameChar_y - 2, 8, 5);
-        rect(gameChar_x - 12, gameChar_y - 8, 5, 8);
-        walkRightCycle = 0;
-        break;
-    }
-  } else if (isFalling || isPlummeting || isJumping) {
-    // char_head
-    fill("#ff296d");
-    rect(gameChar_x - 20, gameChar_y - 75, 40, 30);
-    // char_eyes
-    fill("#d1f9ff");
-    ellipse(gameChar_x - 5, gameChar_y - 65, 15, 15);
-    ellipse(gameChar_x + 5, gameChar_y - 65, 15, 15);
-    fill("#010014");
-    ellipse(gameChar_x - 5, gameChar_y - 65, 12, 12);
-    ellipse(gameChar_x + 5, gameChar_y - 65, 12, 12);
-    fill("#d1f9ff");
-    ellipse(gameChar_x - 6, gameChar_y - 67, 4, 4);
-    ellipse(gameChar_x - 3.75, gameChar_y - 63.5, 3, 3);
-    ellipse(gameChar_x + 4, gameChar_y - 67, 4, 4);
-    ellipse(gameChar_x + 6.75, gameChar_y - 63.5, 3, 3);
-    // char_mouth
-    fill("#010014");
-    ellipse(gameChar_x, gameChar_y - 53, 8, 5);
-    // char_neck
-    fill("#ff296d");
-    rect(gameChar_x - 2, gameChar_y - 45, 4, 2);
-    // char_shirt
-    fill("#1490b3");
-    rect(gameChar_x - 10, gameChar_y - 43, 20, 20);
-    // sleeves
-    rect(gameChar_x - 16, gameChar_y - 43, 6, 6, 2);
-    rect(gameChar_x + 10, gameChar_y - 43, 6, 6, 2);
-    // line and buttons
-    stroke("#010014");
-    strokeWeight(1);
-    line(gameChar_x - 1, gameChar_y - 43, gameChar_x - 1, gameChar_y - 23);
-    noStroke();
-    fill("#010014");
-    ellipse(gameChar_x + 2, gameChar_y - 38, 2, 2);
-    ellipse(gameChar_x + 2, gameChar_y - 33, 2, 2);
-    ellipse(gameChar_x + 2, gameChar_y - 28, 2, 2);
-    // char_arms_hands
-    fill("#ff296d");
-    // char_right_arm
-    rect(gameChar_x - 23, gameChar_y - 41, 9, 3);
-    rect(gameChar_x - 23, gameChar_y - 41, 3, 9);
-    rect(gameChar_x - 23.5, gameChar_y - 32, 5, 4);
-    // char_left_arm
-    rect(gameChar_x + 14, gameChar_y - 41, 9, 3);
-    rect(gameChar_x + 20.5, gameChar_y - 41, 3, 9);
-    rect(gameChar_x + 19.5, gameChar_y - 32, 5, 4);
-    // char_shorts
-    fill("#010014");
-    rect(gameChar_x - 10, gameChar_y - 23, 20, 5);
-    rect(gameChar_x - 10, gameChar_y - 18, 8, 4);
-    rect(gameChar_x + 2, gameChar_y - 18, 8, 4);
-    // char_legs
-    fill("#ff296d");
-    rect(gameChar_x - 9, gameChar_y - 18, 5, 8);
-    rect(gameChar_x + 4, gameChar_y - 18, 5, 8);
-    // char_shoes
-    fill("#010014");
-    rect(gameChar_x - 10, gameChar_y - 10, 8, 5);
-    rect(gameChar_x + 2, gameChar_y - 10, 8, 5);
+    fill("#98D936");
+    rect(gameChar_x - 18, gameChar_y - 57, 38, 60, 20, 5, 20, 5);
+    fill("#F2ECE4");
+    ellipse(gameChar_x + 16, gameChar_y - 34, 7, 20);
+    fill("#01261C");
+    ellipse(gameChar_x + 17, gameChar_y - 34, 5, 17);
+  } else if (isFalling || isPlummeting) {
+    // body
+    fill("#98D936");
+    rect(gameChar_x - 23, gameChar_y - 67, 46, 60, 5, 5, 0, 0);
+    // legs
+    beginShape();
+    curveVertex(gameChar_x - 23, gameChar_y - 7);
+    curveVertex(gameChar_x - 23, gameChar_y - 7);
+    curveVertex(gameChar_x - 17, gameChar_y - 2);
+    curveVertex(gameChar_x - 10, gameChar_y - 2);
+    curveVertex(gameChar_x, gameChar_y - 7);
+    curveVertex(gameChar_x, gameChar_y - 7);
+    endShape();
+    beginShape();
+    curveVertex(gameChar_x + 23, gameChar_y - 7);
+    curveVertex(gameChar_x + 23, gameChar_y - 7);
+    curveVertex(gameChar_x + 17, gameChar_y - 2);
+    curveVertex(gameChar_x + 10, gameChar_y - 2);
+    curveVertex(gameChar_x, gameChar_y - 7);
+    curveVertex(gameChar_x, gameChar_y - 7);
+    endShape();
+    // eyes
+    fill("#F2ECE4");
+    ellipse(gameChar_x - 8, gameChar_y - 44, 20, 20);
+    ellipse(gameChar_x + 8, gameChar_y - 44, 20, 20);
+    fill("#01261C");
+    ellipse(gameChar_x - 8, gameChar_y - 44, 17, 17);
+    ellipse(gameChar_x + 8, gameChar_y - 44, 17, 17);
+    // smile
+    stroke("#01261C");
+    beginShape();
+    curveVertex(gameChar_x - 10, gameChar_y - 30);
+    curveVertex(gameChar_x - 10, gameChar_y - 30);
+    curveVertex(gameChar_x - 5, gameChar_y - 25);
+    curveVertex(gameChar_x + 5, gameChar_y - 25);
+    curveVertex(gameChar_x + 10, gameChar_y - 30);
+    curveVertex(gameChar_x + 10, gameChar_y - 30);
+    endShape();
+    fill("#F2ECE4");
+    rect(gameChar_x - 4, gameChar_y - 30, 4, 3);
+    rect(gameChar_x, gameChar_y - 30, 4, 3);
+    // eyes
+    ellipse(gameChar_x - 10, gameChar_y - 46, 8, 8);
+    ellipse(gameChar_x - 5, gameChar_y - 41, 4, 4);
+    ellipse(gameChar_x + 6, gameChar_y - 46, 8, 8);
+    ellipse(gameChar_x + 11, gameChar_y - 41, 4, 4);
   } else {
     // standing front facing
-    // head
-    fill("#ff296d");
-    rect(gameChar_x - 20, gameChar_y - 75, 40, 30);
+    // body
+    fill("#98D936");
+    rect(gameChar_x - 23, gameChar_y - 57, 46, 60, 5, 5, 5, 5);
     // eyes
-    fill("#f5f5f5");
-    ellipse(gameChar_x - 5, gameChar_y - 65, 15, 15);
-    ellipse(gameChar_x + 5, gameChar_y - 65, 15, 15);
-    fill("#010014");
-    ellipse(gameChar_x - 5, gameChar_y - 65, 12, 12);
-    ellipse(gameChar_x + 5, gameChar_y - 65, 12, 12);
-    fill("#d1f9ff");
-    ellipse(gameChar_x - 6, gameChar_y - 67, 4, 4);
-    ellipse(gameChar_x - 3.75, gameChar_y - 63.5, 3, 3);
-    ellipse(gameChar_x + 4, gameChar_y - 67, 4, 4);
-    ellipse(gameChar_x + 6.75, gameChar_y - 63.5, 3, 3);
+    fill("#F2ECE4");
+    ellipse(gameChar_x - 8, gameChar_y - 34, 20, 20);
+    ellipse(gameChar_x + 8, gameChar_y - 34, 20, 20);
+    fill("#01261C");
+    ellipse(gameChar_x - 8, gameChar_y - 34, 17, 17);
+    ellipse(gameChar_x + 8, gameChar_y - 34, 17, 17);
+    fill("#F2ECE4");
+    stroke("#01261C");
+    ellipse(gameChar_x - 10, gameChar_y - 36, 8, 8);
+    ellipse(gameChar_x - 5, gameChar_y - 31, 4, 4);
+    ellipse(gameChar_x + 6, gameChar_y - 36, 8, 8);
+    ellipse(gameChar_x + 11, gameChar_y - 31, 4, 4);
     // smile
-    let p1 = { x: gameChar_x + 10, y: gameChar_y - 85 };
-    let p2 = { x: gameChar_x + 5, y: gameChar_y - 55 };
-    let p3 = { x: gameChar_x - 5, y: gameChar_y - 55 };
-    let p4 = { x: gameChar_x - 10, y: gameChar_y - 85 };
     noFill();
-    noStroke();
-    curve(p1.x, p1.y, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
-    stroke("#010014");
-    curve(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y, p4.x, p4.y);
-    noStroke();
-    curve(p2.x, p2.y, p3.x, p3.y, p4.x, p4.y, p4.x, p4.y);
-    // neck
-    fill("#ff296d");
-    rect(gameChar_x - 2, gameChar_y - 45, 4, 2);
-    // shirt
-    fill("#1490b3");
-    rect(gameChar_x - 10, gameChar_y - 43, 20, 20);
-    rect(gameChar_x - 16, gameChar_y - 43, 6, 8, 2);
-    rect(gameChar_x + 10, gameChar_y - 43, 6, 8, 2);
-    stroke("#010014");
-    strokeWeight(1);
-    line(gameChar_x - 1, gameChar_y - 43, gameChar_x - 1, gameChar_y - 23);
-    noStroke();
-    fill("#010014");
-    ellipse(gameChar_x + 2, gameChar_y - 38, 2, 2);
-    ellipse(gameChar_x + 2, gameChar_y - 33, 2, 2);
-    ellipse(gameChar_x + 2, gameChar_y - 28, 2, 2);
-    // arms_hands
-    fill("#ff296d");
-    rect(gameChar_x - 15, gameChar_y - 35, 3, 14);
-    rect(gameChar_x + 12, gameChar_y - 35, 3, 14);
-    rect(gameChar_x - 16, gameChar_y - 21, 5, 4);
-    rect(gameChar_x + 11, gameChar_y - 21, 5, 4);
-    // shorts
-    fill("#010014");
-    rect(gameChar_x - 10, gameChar_y - 23, 20, 5);
-    rect(gameChar_x - 10, gameChar_y - 18, 8, 8);
-    rect(gameChar_x + 2, gameChar_y - 18, 8, 8);
-    // legs
-    fill("#ff296d");
-    rect(gameChar_x - 9, gameChar_y - 10, 5, 8);
-    rect(gameChar_x + 4, gameChar_y - 10, 5, 8);
-    // shoes
-    fill("#010014");
-    rect(gameChar_x - 10, gameChar_y - 2, 8, 5);
-    rect(gameChar_x + 2, gameChar_y - 2, 8, 5);
+    beginShape();
+    curveVertex(gameChar_x - 10, gameChar_y - 20);
+    curveVertex(gameChar_x - 10, gameChar_y - 20);
+    curveVertex(gameChar_x - 5, gameChar_y - 15);
+    curveVertex(gameChar_x + 5, gameChar_y - 15);
+    curveVertex(gameChar_x + 10, gameChar_y - 20);
+    curveVertex(gameChar_x + 10, gameChar_y - 20);
+    endShape();
   }
 }
 
@@ -1007,82 +387,104 @@ function moveGameChar() {
   if (isLeft && isFalling) {
     // Draw the character jumping to the left
     // Use for loop for a smooth jump
-    for (let i = 0; i < 7; i++) {
-      gameChar_y -= 1;
-      // stop the character from going beyond 70 from the ground
-      if (gameChar_y < floorPos_y - 70) {
-        gameChar_y = floorPos_y - 70;
-        // stop the player from holding the space bar to float in the air
-        isFalling = false;
-      }
+    // for (let i = 0; i < 7; i++) {
+    //   gameChar_y -= 1;
+    //   // stop the character from going beyond 70 from the ground
+    //   if (gameChar_y < floorPos_y - 70) {
+    //     gameChar_y = floorPos_y - 70;
+    //     // stop the player from holding the space bar to float in the air
+    //     //isFalling = false;
+    //   }
+    // }
+    // Stop character from moving after reaching the cabin.
+    if (gameChar_world_x > 1640) {
+      isLeft = false;
+    }
+    // Move the character unless the player reaches the cabin.
+    if (gameChar_x > width * 0.2 && gameChar_world_x < 1640) {
+      gameChar_x -= 5;
+    } else if (gameChar_world_x < 1640) {
+      scrollPos += 5;
     }
   }
   // Draw the character jumping to the left if the player jumps straight up
   // and then moves left.
-  if (gameChar_y < floorPos_y && isLeft) {
-    isJumpLeft = true;
-  }
+  //   if (gameChar_y < floorPos_y && isLeft) {
+  //     isJumpLeft = true;
+  //   }
 
   // Make the character jump right.
   if (isRight && isFalling) {
-    // Draw the character jumping to the right
-    // Use for loop for a smooth jump
-    for (let i = 0; i < 7; i++) {
-      gameChar_y -= 1;
-      // stop the character from going beyond 70 from the ground
-      if (gameChar_y < floorPos_y - 70) {
-        gameChar_y = floorPos_y - 70;
-        // stop the player from holding the space bar to float in the air
-        isFalling = false;
-      }
+    // // Draw the character jumping to the right
+    // // Use for loop for a smooth jump
+    // for (let i = 0; i < 7; i++) {
+    //   gameChar_y -= 1;
+    //   // stop the character from going beyond 70 from the ground
+    //   if (gameChar_y < floorPos_y - 70) {
+    //     gameChar_y = floorPos_y - 70;
+    //     // stop the player from holding the space bar to float in the air
+    //     //isFalling = false;
+    //   }
+    // }
+    // Stop character from moving after reaching the cabin.
+    if (gameChar_world_x > 1640) {
+      isRight = false;
+    }
+    // Move the character unless the player reaches the cabin.
+    if (gameChar_x < width * 0.8) {
+      gameChar_x += 5;
+    } else if (gameChar_world_x < 1640) {
+      scrollPos -= 5; // negative for moving against the background
     }
   }
   // Draw the character jumping to the right if the player jumps straight up
   // and then moves right.
-  if (gameChar_y < floorPos_y && isRight) {
-    isJumpRight = true;
-  }
+  //   if (gameChar_y < floorPos_y && isRight) {
+  //     isJumpRight = true;
+  //   }
 
   // Make the character jump up.
-  if (isFalling) {
-    // Use for loop for a smooth jump
-    for (let i = 0; i < 10; i++) {
-      gameChar_y -= 1;
-    }
-    // stop the character from going beyond 100 from the ground
-    if (gameChar_y < floorPos_y - 100) {
-      gameChar_y = floorPos_y - 100;
-      // stop the player from holding the space bar to float in the air
-      isFalling = false;
-    }
-  }
+  //   if (isFalling) {
+  //     // Use for loop for a smooth jump
+  //     for (let i = 0; i < 10; i++) {
+  //       gameChar_y -= 1;
+  //     }
+  //     // stop the character from going beyond 100 from the ground
+  //     if (gameChar_y < floorPos_y - 100) {
+  //       gameChar_y = floorPos_y - 100;
+  //       // stop the player from holding the space bar to float in the air
+  //       isFalling = false;
+  //     }
+  //   }
 
   // Make the character fall if above the ground. - Gravity
   if (gameChar_y < floorPos_y) {
-    //var isContact = false;
+    var isContact = false;
     for (let i = 0; i < platforms.length; i++) {
       if (platforms[i].checkContact(gameChar_world_x, gameChar_y)) {
-        //isContact = true;
-        //break;
-        gameChar_y = platforms[i].y - 90;
+        isContact = true;
         break;
       }
     }
-    // isJumping = true;
-    gameChar_y += 4;
+    if (!isContact) {
+      gameChar_y += 4;
+      isFalling = true;
+    }
+  } else {
+    isFalling = false;
   }
-  console.log(isFalling);
+
   // Make the character fall faster if it's in the canyon.
   if (isPlummeting) {
     gameChar_y += 12;
   }
 
   // If at ground level then face forward.
-  if (gameChar_y >= floorPos_y) {
-    isJumping = false;
-    isJumpLeft = false;
-    isJumpRight = false;
-  }
+  //   if (gameChar_y >= floorPos_y) {
+  //     isJumping = false;
+  //     isJumpLeft = false;
+  //     isJumpRight = false;
+  //   }
 
   // Stop the character from going off the left side of the screen.
   if (gameChar_world_x < 194) {
