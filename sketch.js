@@ -71,6 +71,7 @@ function draw() {
   // Draw background, items, and character.
   // --------------------------------------
 
+  console.log(gameChar_y);
   background("#7dd8ea"); // fill the sky blue
 
   noStroke();
@@ -233,6 +234,9 @@ function drawGameChar() {
     // jumping-right
     fill("#98D936");
     rect(gameChar_x - 18, gameChar_y - 67, 38, 60, 5, 20, 5, 20);
+    drawingContext.filter = "blur(15px)";
+    rect(gameChar_x - 18, gameChar_y - 67, 38, 60, 5, 20, 5, 20);
+    drawingContext.filter = "none";
     beginShape();
     curveVertex(gameChar_x - 4, gameChar_y - 7);
     curveVertex(gameChar_x - 4, gameChar_y - 7);
@@ -249,6 +253,9 @@ function drawGameChar() {
     // jumping-left
     fill("#98D936");
     rect(gameChar_x - 18, gameChar_y - 67, 38, 60, 20, 5, 20, 5);
+    drawingContext.filter = "blur(15px)";
+    rect(gameChar_x - 18, gameChar_y - 67, 38, 60, 20, 5, 20, 5);
+    drawingContext.filter = "none";
     beginShape();
     curveVertex(gameChar_x + 4, gameChar_y - 7);
     curveVertex(gameChar_x + 4, gameChar_y - 7);
@@ -264,6 +271,9 @@ function drawGameChar() {
   } else if (isLeft) {
     fill("#98D936");
     rect(gameChar_x - 18, gameChar_y - 57, 38, 60, 5, 20, 5, 20);
+    drawingContext.filter = "blur(15px)";
+    rect(gameChar_x - 18, gameChar_y - 57, 38, 60, 5, 20, 5, 20);
+    drawingContext.filter = "none";
     fill("#F2ECE4");
     ellipse(gameChar_x - 15, gameChar_y - 34, 7, 20);
     fill("#01261C");
@@ -271,6 +281,9 @@ function drawGameChar() {
   } else if (isRight) {
     fill("#98D936");
     rect(gameChar_x - 18, gameChar_y - 57, 38, 60, 20, 5, 20, 5);
+    drawingContext.filter = "blur(15px)";
+    rect(gameChar_x - 18, gameChar_y - 57, 38, 60, 20, 5, 20, 5);
+    drawingContext.filter = "none";
     fill("#F2ECE4");
     ellipse(gameChar_x + 16, gameChar_y - 34, 7, 20);
     fill("#01261C");
@@ -279,6 +292,9 @@ function drawGameChar() {
     // body
     fill("#98D936");
     rect(gameChar_x - 23, gameChar_y - 67, 46, 60, 5, 5, 0, 0);
+    drawingContext.filter = "blur(15px)";
+    rect(gameChar_x - 23, gameChar_y - 67, 46, 60, 5, 5, 0, 0);
+    drawingContext.filter = "none";
     // legs
     beginShape();
     curveVertex(gameChar_x - 23, gameChar_y - 7);
@@ -326,6 +342,9 @@ function drawGameChar() {
     // body
     fill("#98D936");
     rect(gameChar_x - 23, gameChar_y - 57, 46, 60, 5, 5, 5, 5);
+    drawingContext.filter = "blur(15px)";
+    rect(gameChar_x - 23, gameChar_y - 57, 46, 60, 5, 5, 5, 5);
+    drawingContext.filter = "none";
     // eyes
     fill("#F2ECE4");
     ellipse(gameChar_x - 8, gameChar_y - 34, 20, 20);
@@ -364,9 +383,9 @@ function moveGameChar() {
     }
     // Move the character unless the player reaches the cabin.
     if (gameChar_x > width * 0.2 && gameChar_world_x < 1640) {
-      gameChar_x -= 5;
+      gameChar_x -= 2;
     } else if (gameChar_world_x < 1640) {
-      scrollPos += 5;
+      scrollPos += 2;
     }
   }
   // Make the character run right.
@@ -377,9 +396,9 @@ function moveGameChar() {
     }
     // Move the character unless the player reaches the cabin.
     if (gameChar_x < width * 0.8) {
-      gameChar_x += 5;
+      gameChar_x += 2;
     } else if (gameChar_world_x < 1640) {
-      scrollPos -= 5; // negative for moving against the background
+      scrollPos -= 2; // negative for moving against the background
     }
   }
 
@@ -402,9 +421,9 @@ function moveGameChar() {
     }
     // Move the character unless the player reaches the cabin.
     if (gameChar_x > width * 0.2 && gameChar_world_x < 1640) {
-      gameChar_x -= 5;
+      gameChar_x -= 3;
     } else if (gameChar_world_x < 1640) {
-      scrollPos += 5;
+      scrollPos += 3;
     }
   }
   // Draw the character jumping to the left if the player jumps straight up
@@ -432,9 +451,9 @@ function moveGameChar() {
     }
     // Move the character unless the player reaches the cabin.
     if (gameChar_x < width * 0.8) {
-      gameChar_x += 5;
+      gameChar_x += 3;
     } else if (gameChar_world_x < 1640) {
-      scrollPos -= 5; // negative for moving against the background
+      scrollPos -= 3; // negative for moving against the background
     }
   }
   // Draw the character jumping to the right if the player jumps straight up
@@ -463,12 +482,15 @@ function moveGameChar() {
     for (let i = 0; i < platforms.length; i++) {
       if (platforms[i].checkContact(gameChar_world_x, gameChar_y)) {
         isContact = true;
+        //gameChar_y = platforms[i].y;
         break;
       }
     }
     if (!isContact) {
       gameChar_y += 4;
       isFalling = true;
+    } else {
+      isFalling = false;
     }
   } else {
     isFalling = false;
@@ -476,7 +498,7 @@ function moveGameChar() {
 
   // Make the character fall faster if it's in the canyon.
   if (isPlummeting) {
-    gameChar_y += 12;
+    gameChar_y += 8;
   }
 
   // If at ground level then face forward.
@@ -1480,9 +1502,7 @@ function winGame() {
   }
   if (gameChar_world_x > 1580) {
     gameChar_y = cabin_y + 363;
-    isJumping = false;
-    isJumpLeft = false;
-    isJumpRight = false;
+    isFalling = false;
     textSize(84);
     stroke("black");
     textFont(fontRobotoBold);
