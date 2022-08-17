@@ -32,7 +32,7 @@ var trees_x;
 var canyons;
 var collectables;
 var isFound; // make collectables disappear
-var cabin_y;
+var cabin;
 var flagpole;
 var game_score;
 var liveShapes;
@@ -66,7 +66,6 @@ function draw() {
   // Draw background, items, and character.
   // --------------------------------------
 
-  console.log(gameChar_y);
   background("#7dd8ea"); // fill the sky blue
 
   noStroke();
@@ -189,16 +188,6 @@ function keyPressed() {
       gameChar_y -= 100;
     }
   }
-
-  //   // So the player can't repeatedly push the space button to stay in the air
-  //   if (gameChar_y < floorPos_y) {
-  //     isFalling = false;
-  //   }
-  //   // So the player can't repeatedly push the space button to stay in the air
-  //   // when falling down the canyon
-  //   if (gameChar_y > floorPos_y + 2) {
-  //     isFalling = false;
-  //   }
 }
 
 function keyReleased() {
@@ -227,12 +216,14 @@ function mouseClicked() {
 function drawGameChar() {
   let charColor = "AliceBlue";
   if (isLeft && isFalling) {
-    // jumping-right
+    // jumping-left
     fill(charColor);
+    // body
     rect(gameChar_x - 18, gameChar_y - 67, 38, 60, 5, 20, 5, 20);
     drawingContext.filter = "blur(15px)";
     rect(gameChar_x - 18, gameChar_y - 67, 38, 60, 5, 20, 5, 20);
     drawingContext.filter = "none";
+    // legs
     beginShape();
     curveVertex(gameChar_x - 4, gameChar_y - 7);
     curveVertex(gameChar_x - 4, gameChar_y - 7);
@@ -241,17 +232,20 @@ function drawGameChar() {
     curveVertex(gameChar_x + 16, gameChar_y - 7);
     curveVertex(gameChar_x + 16, gameChar_y - 7);
     endShape();
+    // eyes
     fill("#F2ECE4");
     ellipse(gameChar_x - 15, gameChar_y - 44, 7, 20);
     fill("#01261C");
     ellipse(gameChar_x - 16, gameChar_y - 44, 5, 17);
   } else if (isRight && isFalling) {
-    // jumping-left
+    // jumping right
     fill(charColor);
+    // body
     rect(gameChar_x - 18, gameChar_y - 67, 38, 60, 20, 5, 20, 5);
     drawingContext.filter = "blur(15px)";
     rect(gameChar_x - 18, gameChar_y - 67, 38, 60, 20, 5, 20, 5);
     drawingContext.filter = "none";
+    // legs
     beginShape();
     curveVertex(gameChar_x + 4, gameChar_y - 7);
     curveVertex(gameChar_x + 4, gameChar_y - 7);
@@ -260,26 +254,31 @@ function drawGameChar() {
     curveVertex(gameChar_x - 16, gameChar_y - 7);
     curveVertex(gameChar_x - 16, gameChar_y - 7);
     endShape();
+    // eyes
     fill("#F2ECE4");
     ellipse(gameChar_x + 15, gameChar_y - 44, 7, 20);
     fill("#01261C");
     ellipse(gameChar_x + 16, gameChar_y - 44, 5, 17);
   } else if (isLeft) {
     fill(charColor);
+    // body
     rect(gameChar_x - 18, gameChar_y - 57, 38, 60, 5, 20, 5, 20);
     drawingContext.filter = "blur(15px)";
     rect(gameChar_x - 18, gameChar_y - 57, 38, 60, 5, 20, 5, 20);
     drawingContext.filter = "none";
+    // eyes
     fill("#F2ECE4");
     ellipse(gameChar_x - 15, gameChar_y - 34, 7, 20);
     fill("#01261C");
     ellipse(gameChar_x - 16, gameChar_y - 34, 5, 17);
   } else if (isRight) {
     fill(charColor);
+    // body
     rect(gameChar_x - 18, gameChar_y - 57, 38, 60, 20, 5, 20, 5);
     drawingContext.filter = "blur(15px)";
     rect(gameChar_x - 18, gameChar_y - 57, 38, 60, 20, 5, 20, 5);
     drawingContext.filter = "none";
+    // eyes
     fill("#F2ECE4");
     ellipse(gameChar_x + 16, gameChar_y - 34, 7, 20);
     fill("#01261C");
@@ -376,7 +375,7 @@ function moveGameChar() {
     // Move the character unless the player reaches the cabin.
     if (gameChar_x > width * 0.2 && gameChar_world_x < 1640) {
       gameChar_x -= 7;
-    } else if (gameChar_world_x < 1640) {
+    } else if (gameChar_world_x < cabin.x + 616) {
       scrollPos += 7;
     }
   }
@@ -385,14 +384,14 @@ function moveGameChar() {
     // Move the character unless the player reaches the cabin.
     if (gameChar_x < width * 0.8) {
       gameChar_x += 7;
-    } else if (gameChar_world_x < 1640) {
+    } else if (gameChar_world_x < cabin.x + 616) {
       scrollPos -= 7; // negative for moving against the background
     }
   }
 
   // Make the character jump left.
   if (isLeft && isFalling) {
-    if (gameChar_x > width * 0.2 && gameChar_world_x < 1640) {
+    if (gameChar_x > width * 0.2 && gameChar_world_x < cabin.x + 616) {
       gameChar_x += 1;
     } else {
       scrollPos -= 1;
@@ -403,11 +402,11 @@ function moveGameChar() {
     if (gameChar_x < width * 0.8) {
       gameChar_x -= 1;
     } else {
-      scrollPos += 1; // negative for moving against the background
+      scrollPos += 1;
     }
   }
 
-  // Make the character fall if above the ground. - Gravity
+  // Make the character fall if above the ground and not on a platform. - Gravity
   if (gameChar_y < floorPos_y) {
     var isContact = false;
     for (let i = 0; i < platforms.length; i++) {
@@ -735,202 +734,202 @@ function drawCabin() {
   // Main roof section
   fill("#b78a60");
   beginShape();
-  vertex(width + 600, cabin_y + 100);
-  vertex(width + 800, cabin_y + 100);
-  vertex(width + 900, cabin_y + 175);
-  vertex(width + 700, cabin_y + 175);
+  vertex(cabin.x + 600, cabin.y + 100);
+  vertex(cabin.x + 800, cabin.y + 100);
+  vertex(cabin.x + 900, cabin.y + 175);
+  vertex(cabin.x + 700, cabin.y + 175);
   endShape(CLOSE);
   // Front slant beam - right
   beginShape();
-  vertex(width + 600, cabin_y + 100);
-  vertex(width + 700, cabin_y + 175);
-  vertex(width + 700, cabin_y + 190);
-  vertex(width + 600, cabin_y + 115);
+  vertex(cabin.x + 600, cabin.y + 100);
+  vertex(cabin.x + 700, cabin.y + 175);
+  vertex(cabin.x + 700, cabin.y + 190);
+  vertex(cabin.x + 600, cabin.y + 115);
   endShape(CLOSE);
   // Front slant beam - left
   beginShape();
-  vertex(width + 600, cabin_y + 100);
-  vertex(width + 600, cabin_y + 115);
-  vertex(width + 500, cabin_y + 190);
-  vertex(width + 500, cabin_y + 175);
+  vertex(cabin.x + 600, cabin.y + 100);
+  vertex(cabin.x + 600, cabin.y + 115);
+  vertex(cabin.x + 500, cabin.y + 190);
+  vertex(cabin.x + 500, cabin.y + 175);
   endShape(CLOSE);
   // Long beam
   fill("#8c634a");
   beginShape();
-  vertex(width + 700, cabin_y + 175);
-  vertex(width + 700, cabin_y + 190);
-  vertex(width + 900, cabin_y + 190);
-  vertex(width + 900, cabin_y + 175);
+  vertex(cabin.x + 700, cabin.y + 175);
+  vertex(cabin.x + 700, cabin.y + 190);
+  vertex(cabin.x + 900, cabin.y + 190);
+  vertex(cabin.x + 900, cabin.y + 175);
   endShape(CLOSE);
   // Underside of roof
   beginShape();
-  vertex(width + 500, cabin_y + 190);
-  vertex(width + 530, cabin_y + 190);
-  vertex(width + 530, cabin_y + 175);
-  vertex(width + 604, cabin_y + 118);
-  vertex(width + 600, cabin_y + 115);
+  vertex(cabin.x + 500, cabin.y + 190);
+  vertex(cabin.x + 530, cabin.y + 190);
+  vertex(cabin.x + 530, cabin.y + 175);
+  vertex(cabin.x + 604, cabin.y + 118);
+  vertex(cabin.x + 600, cabin.y + 115);
   endShape(CLOSE);
   // Cabin walls and windows
   // Front top wall
   fill("#b78a60");
   noStroke();
   triangle(
-    width + 530,
-    cabin_y + 175,
-    width + 604,
-    cabin_y + 118,
-    width + 680,
-    cabin_y + 175
+    cabin.x + 530,
+    cabin.y + 175,
+    cabin.x + 604,
+    cabin.y + 118,
+    cabin.x + 680,
+    cabin.y + 175
   );
   stroke("#4d301b");
-  rect(width + 530, cabin_y + 175, 150, 40);
+  rect(cabin.x + 530, cabin.y + 175, 150, 40);
   // Round window
   fill("#775d4d");
-  ellipse(width + 600, cabin_y + 175, 50, 50);
+  ellipse(cabin.x + 600, cabin.y + 175, 50, 50);
   fill("#fadb86");
-  ellipse(width + 600, cabin_y + 175, 42, 42);
+  ellipse(cabin.x + 600, cabin.y + 175, 42, 42);
   strokeWeight(3);
-  line(width + 578, cabin_y + 175, width + 621, cabin_y + 175);
-  line(width + 600, cabin_y + 155, width + 600, cabin_y + 195);
+  line(cabin.x + 578, cabin.y + 175, cabin.x + 621, cabin.y + 175);
+  line(cabin.x + 600, cabin.y + 155, cabin.x + 600, cabin.y + 195);
   // Wood plank lines from top to bottom.
   strokeWeight(1);
-  line(width + 586, cabin_y + 130, width + 620, cabin_y + 130); // top triangle
-  line(width + 568, cabin_y + 145, width + 640, cabin_y + 145);
-  line(width + 620, cabin_y + 160, width + 660, cabin_y + 160); // right side of window - top
-  line(width + 548, cabin_y + 160, width + 580, cabin_y + 160); // left side of window - top
-  line(width + 530, cabin_y + 190, width + 580, cabin_y + 190); // left side of window - bottom
-  line(width + 620, cabin_y + 190, width + 680, cabin_y + 190); // right side of window - bottom
-  line(width + 530, cabin_y + 205, width + 680, cabin_y + 205);
+  line(cabin.x + 586, cabin.y + 130, cabin.x + 620, cabin.y + 130); // top triangle
+  line(cabin.x + 568, cabin.y + 145, cabin.x + 640, cabin.y + 145);
+  line(cabin.x + 620, cabin.y + 160, cabin.x + 660, cabin.y + 160); // right side of window - top
+  line(cabin.x + 548, cabin.y + 160, cabin.x + 580, cabin.y + 160); // left side of window - top
+  line(cabin.x + 530, cabin.y + 190, cabin.x + 580, cabin.y + 190); // left side of window - bottom
+  line(cabin.x + 620, cabin.y + 190, cabin.x + 680, cabin.y + 190); // right side of window - bottom
+  line(cabin.x + 530, cabin.y + 205, cabin.x + 680, cabin.y + 205);
   // Side top wall
   fill("#8c634a");
-  rect(width + 680, cabin_y + 190, 210, 25);
+  rect(cabin.x + 680, cabin.y + 190, 210, 25);
   noStroke();
   triangle(
-    width + 680,
-    cabin_y + 175,
-    width + 700,
-    cabin_y + 190,
-    width + 680,
-    cabin_y + 190
+    cabin.x + 680,
+    cabin.y + 175,
+    cabin.x + 700,
+    cabin.y + 190,
+    cabin.x + 680,
+    cabin.y + 190
   );
   stroke("#4d301b");
-  line(width + 680, cabin_y + 205, width + 890, cabin_y + 205);
+  line(cabin.x + 680, cabin.y + 205, cabin.x + 890, cabin.y + 205);
   // Side bottom wall
-  rect(width + 720, cabin_y + 215, 170, 150);
+  rect(cabin.x + 720, cabin.y + 215, 170, 150);
   // Side square window
   fill("#b78a60");
-  rect(width + 765, cabin_y + 245, 80, 80);
+  rect(cabin.x + 765, cabin.y + 245, 80, 80);
   fill("#fadb86");
-  rect(width + 770, cabin_y + 250, 70, 70);
+  rect(cabin.x + 770, cabin.y + 250, 70, 70);
   // Wood plank lines from top to bottom.
   strokeWeight(3);
-  line(width + 770, cabin_y + 285, width + 840, cabin_y + 285);
-  line(width + 805, cabin_y + 250, width + 805, cabin_y + 320);
+  line(cabin.x + 770, cabin.y + 285, cabin.x + 840, cabin.y + 285);
+  line(cabin.x + 805, cabin.y + 250, cabin.x + 805, cabin.y + 320);
   strokeWeight(1);
-  line(width + 720, cabin_y + 230, width + 890, cabin_y + 230);
-  line(width + 720, cabin_y + 245, width + 890, cabin_y + 245);
-  line(width + 720, cabin_y + 260, width + 765, cabin_y + 260); // left side of window
-  line(width + 845, cabin_y + 260, width + 890, cabin_y + 260); // right side of window
-  line(width + 720, cabin_y + 275, width + 765, cabin_y + 275); // left side of window
-  line(width + 845, cabin_y + 275, width + 890, cabin_y + 275); // right side of window
-  line(width + 720, cabin_y + 290, width + 765, cabin_y + 290); // left side of window
-  line(width + 845, cabin_y + 290, width + 890, cabin_y + 290); // right side of window
-  line(width + 720, cabin_y + 305, width + 765, cabin_y + 305); // left side of window
-  line(width + 845, cabin_y + 305, width + 890, cabin_y + 305); // right side of window
-  line(width + 720, cabin_y + 320, width + 765, cabin_y + 320); // left side of window
-  line(width + 845, cabin_y + 320, width + 890, cabin_y + 320); // right side of window
-  line(width + 720, cabin_y + 335, width + 890, cabin_y + 335);
-  line(width + 720, cabin_y + 350, width + 890, cabin_y + 350);
+  line(cabin.x + 720, cabin.y + 230, cabin.x + 890, cabin.y + 230);
+  line(cabin.x + 720, cabin.y + 245, cabin.x + 890, cabin.y + 245);
+  line(cabin.x + 720, cabin.y + 260, cabin.x + 765, cabin.y + 260); // left side of window
+  line(cabin.x + 845, cabin.y + 260, cabin.x + 890, cabin.y + 260); // right side of window
+  line(cabin.x + 720, cabin.y + 275, cabin.x + 765, cabin.y + 275); // left side of window
+  line(cabin.x + 845, cabin.y + 275, cabin.x + 890, cabin.y + 275); // right side of window
+  line(cabin.x + 720, cabin.y + 290, cabin.x + 765, cabin.y + 290); // left side of window
+  line(cabin.x + 845, cabin.y + 290, cabin.x + 890, cabin.y + 290); // right side of window
+  line(cabin.x + 720, cabin.y + 305, cabin.x + 765, cabin.y + 305); // left side of window
+  line(cabin.x + 845, cabin.y + 305, cabin.x + 890, cabin.y + 305); // right side of window
+  line(cabin.x + 720, cabin.y + 320, cabin.x + 765, cabin.y + 320); // left side of window
+  line(cabin.x + 845, cabin.y + 320, cabin.x + 890, cabin.y + 320); // right side of window
+  line(cabin.x + 720, cabin.y + 335, cabin.x + 890, cabin.y + 335);
+  line(cabin.x + 720, cabin.y + 350, cabin.x + 890, cabin.y + 350);
   // Front bottom wall next to side wall.
   fill("#b78a60");
-  rect(width + 687, cabin_y + 215, 32, 150);
-  line(width + 687, cabin_y + 230, width + 719, cabin_y + 230);
-  line(width + 687, cabin_y + 245, width + 719, cabin_y + 245);
-  line(width + 687, cabin_y + 260, width + 719, cabin_y + 260);
-  line(width + 687, cabin_y + 275, width + 719, cabin_y + 275);
-  line(width + 687, cabin_y + 290, width + 719, cabin_y + 290);
-  line(width + 687, cabin_y + 305, width + 719, cabin_y + 305);
-  line(width + 687, cabin_y + 320, width + 719, cabin_y + 320);
-  line(width + 687, cabin_y + 335, width + 719, cabin_y + 335);
-  line(width + 687, cabin_y + 350, width + 719, cabin_y + 350);
+  rect(cabin.x + 687, cabin.y + 215, 32, 150);
+  line(cabin.x + 687, cabin.y + 230, cabin.x + 719, cabin.y + 230);
+  line(cabin.x + 687, cabin.y + 245, cabin.x + 719, cabin.y + 245);
+  line(cabin.x + 687, cabin.y + 260, cabin.x + 719, cabin.y + 260);
+  line(cabin.x + 687, cabin.y + 275, cabin.x + 719, cabin.y + 275);
+  line(cabin.x + 687, cabin.y + 290, cabin.x + 719, cabin.y + 290);
+  line(cabin.x + 687, cabin.y + 305, cabin.x + 719, cabin.y + 305);
+  line(cabin.x + 687, cabin.y + 320, cabin.x + 719, cabin.y + 320);
+  line(cabin.x + 687, cabin.y + 335, cabin.x + 719, cabin.y + 335);
+  line(cabin.x + 687, cabin.y + 350, cabin.x + 719, cabin.y + 350);
   // Right side of right pillar
   fill("#8c634a");
-  rect(width + 680, cabin_y + 215, 7, 150);
+  rect(cabin.x + 680, cabin.y + 215, 7, 150);
   // Right side of porch
-  rect(width + 680, cabin_y + 365, 210, 10);
+  rect(cabin.x + 680, cabin.y + 365, 210, 10);
   // Right side of first leg
-  rect(width + 680, cabin_y + 375, 7, 40);
+  rect(cabin.x + 680, cabin.y + 375, 7, 40);
   // Right side of second leg
-  rect(width + 720, cabin_y + 375, 7, 40);
+  rect(cabin.x + 720, cabin.y + 375, 7, 40);
   // Right side of third leg
-  rect(width + 883, cabin_y + 375, 7, 40);
+  rect(cabin.x + 883, cabin.y + 375, 7, 40);
   // Front side of first leg
   fill("#b78a60");
-  rect(width + 670, cabin_y + 375, 10, 40);
+  rect(cabin.x + 670, cabin.y + 375, 10, 40);
   // Front side of second leg
-  rect(width + 710, cabin_y + 375, 10, 40);
+  rect(cabin.x + 710, cabin.y + 375, 10, 40);
   // Front side of third leg
-  rect(width + 873, cabin_y + 375, 10, 40);
+  rect(cabin.x + 873, cabin.y + 375, 10, 40);
   // Front side of right pillar
-  rect(width + 670, cabin_y + 215, 10, 150);
+  rect(cabin.x + 670, cabin.y + 215, 10, 150);
   // Front side of porch - right side of stairs
-  rect(width + 605, cabin_y + 365, 75, 10);
+  rect(cabin.x + 605, cabin.y + 365, 75, 10);
   // Side of steps
   fill("#8c634a");
   beginShape();
-  vertex(width + 605, cabin_y + 365);
-  vertex(width + 605, cabin_y + 415);
-  vertex(width + 555, cabin_y + 415);
-  vertex(width + 555, cabin_y + 400);
-  vertex(width + 572, cabin_y + 400);
-  vertex(width + 572, cabin_y + 383);
-  vertex(width + 587, cabin_y + 383);
-  vertex(width + 587, cabin_y + 365);
+  vertex(cabin.x + 605, cabin.y + 365);
+  vertex(cabin.x + 605, cabin.y + 415);
+  vertex(cabin.x + 555, cabin.y + 415);
+  vertex(cabin.x + 555, cabin.y + 400);
+  vertex(cabin.x + 572, cabin.y + 400);
+  vertex(cabin.x + 572, cabin.y + 383);
+  vertex(cabin.x + 587, cabin.y + 383);
+  vertex(cabin.x + 587, cabin.y + 365);
   endShape(CLOSE);
   // Front of steps
   fill("#b78a60");
-  rect(width + 515, cabin_y + 400, 40, 14.5);
+  rect(cabin.x + 515, cabin.y + 400, 40, 14.5);
   fill("#b78a60");
-  rect(width + 530, cabin_y + 382, 44, 18);
-  rect(width + 545, cabin_y + 365, 48, 17);
+  rect(cabin.x + 530, cabin.y + 382, 44, 18);
+  rect(cabin.x + 545, cabin.y + 365, 48, 17);
   // Front side of left pillar
-  rect(width + 530, cabin_y + 215, 10, 150);
+  rect(cabin.x + 530, cabin.y + 215, 10, 150);
   // Side of left pillar
   fill("#8c634a");
-  rect(width + 540, cabin_y + 215, 7, 150);
+  rect(cabin.x + 540, cabin.y + 215, 7, 150);
   // Front side of porch - left side of stairs
   fill("#b78a60");
-  rect(width + 530, cabin_y + 365, 15, 10);
+  rect(cabin.x + 530, cabin.y + 365, 15, 10);
   // Front side of left leg
-  rect(width + 530, cabin_y + 375, 10, 7);
+  rect(cabin.x + 530, cabin.y + 375, 10, 7);
   // Side of left leg
   fill("#8c634a");
-  rect(width + 540, cabin_y + 375, 4, 7);
+  rect(cabin.x + 540, cabin.y + 375, 4, 7);
   // Front bottom wall
   fill("#b78a60");
-  rect(width + 560, cabin_y + 215, 110, 150);
-  line(width + 560, cabin_y + 230, width + 670, cabin_y + 230);
-  line(width + 560, cabin_y + 245, width + 670, cabin_y + 245);
-  line(width + 560, cabin_y + 260, width + 670, cabin_y + 260);
-  line(width + 560, cabin_y + 275, width + 670, cabin_y + 275);
-  line(width + 560, cabin_y + 290, width + 670, cabin_y + 290);
-  line(width + 560, cabin_y + 305, width + 670, cabin_y + 305);
-  line(width + 560, cabin_y + 320, width + 670, cabin_y + 320);
-  line(width + 560, cabin_y + 335, width + 670, cabin_y + 335);
-  line(width + 560, cabin_y + 350, width + 670, cabin_y + 350);
+  rect(cabin.x + 560, cabin.y + 215, 110, 150);
+  line(cabin.x + 560, cabin.y + 230, cabin.x + 670, cabin.y + 230);
+  line(cabin.x + 560, cabin.y + 245, cabin.x + 670, cabin.y + 245);
+  line(cabin.x + 560, cabin.y + 260, cabin.x + 670, cabin.y + 260);
+  line(cabin.x + 560, cabin.y + 275, cabin.x + 670, cabin.y + 275);
+  line(cabin.x + 560, cabin.y + 290, cabin.x + 670, cabin.y + 290);
+  line(cabin.x + 560, cabin.y + 305, cabin.x + 670, cabin.y + 305);
+  line(cabin.x + 560, cabin.y + 320, cabin.x + 670, cabin.y + 320);
+  line(cabin.x + 560, cabin.y + 335, cabin.x + 670, cabin.y + 335);
+  line(cabin.x + 560, cabin.y + 350, cabin.x + 670, cabin.y + 350);
   // Top frame of door
   fill("#8c634a");
-  rect(width + 590, cabin_y + 275, 70, 10);
+  rect(cabin.x + 590, cabin.y + 275, 70, 10);
   // Left frame of door
-  rect(width + 590, cabin_y + 285, 10, 80);
+  rect(cabin.x + 590, cabin.y + 285, 10, 80);
   // Right frame of door
-  rect(width + 650, cabin_y + 285, 10, 80);
+  rect(cabin.x + 650, cabin.y + 285, 10, 80);
   // Door
   fill("#C91916");
-  rect(width + 600, cabin_y + 285, 50, 80);
+  rect(cabin.x + 600, cabin.y + 285, 50, 80);
   // Door handle
   fill("#fadb86");
-  ellipse(width + 610, cabin_y + 325, 7);
+  ellipse(cabin.x + 610, cabin.y + 325, 7);
 }
 
 // ------------------------------------
@@ -1000,19 +999,12 @@ function checkCanyon(t_canyon) {
   // Jumping over and falling down the canyon.
   if (
     gameChar_y >= floorPos_y &&
-    gameChar_world_x > t_canyon.x_pos - 35 &&
-    gameChar_world_x < t_canyon.x_pos + 35
+    gameChar_world_x > t_canyon.x_pos - t_canyon.width / 2 + 25 &&
+    gameChar_world_x < t_canyon.x_pos + t_canyon.width / 2 - 25
   ) {
     isLeft = false;
     isRight = false;
     isPlummeting = true;
-    // Position the character in the canyon so his body and arms stay within the
-    // canyon walls.
-    if (gameChar_world_x < t_canyon.x_pos) {
-      gameChar_x = t_canyon.x_pos + scrollPos - 15;
-    } else {
-      gameChar_x = t_canyon.x_pos + scrollPos + 15;
-    }
   }
 }
 
@@ -1036,9 +1028,9 @@ function createWaterImgArray(t_water_array) {
 function drawWater(t_canyon, t_water_array, t_water_cycle) {
   image(
     t_water_array[t_water_cycle],
-    t_canyon.x_pos - 40,
+    t_canyon.x_pos - t_canyon.width / 2,
     floorPos_y + 65,
-    80,
+    t_canyon.width,
     80
   );
 }
@@ -1066,7 +1058,7 @@ function drawCollectable(t_collectable) {
   fill("#E89507");
   textSize(30);
   textFont(fontRobotoBold);
-  text("1", t_collectable.x_pos - 8, t_collectable.y_pos + 11);
+  text("I", t_collectable.x_pos - 5, t_collectable.y_pos + 11);
 }
 
 // Function to check character has collected an item.
@@ -1093,7 +1085,7 @@ function drawCollectableCounter() {
   fill("#E89507");
   textSize(30);
   textFont(fontRobotoBold);
-  text("1", 46, 51);
+  text("I", 50, 51);
   fill("white");
   textSize(36);
   textFont(fontRobotoBold);
@@ -1106,9 +1098,8 @@ function drawCollectableCounter() {
 
 // Function to start game.
 function startGame() {
-  gameChar_x = width - 830;
+  gameChar_x = 100;
   gameChar_y = floorPos_y;
-
   // Variable to control the background scrolling.
   // Subract width and 300 to work on cabin. Set to 0 to reset.
   scrollPos = 0;
@@ -1135,7 +1126,10 @@ function startGame() {
   flagpole = { isReached: false, x_pos: 1520, flag_height: 300 };
 
   // Variable for cabin y position.
-  cabin_y = 20;
+  cabin = {
+    y: 20,
+    x: 1024,
+  };
 
   // Initialise arrays of background/foreground objects.
   trees_x = [230, 530, 740, 1080, 1380];
@@ -1181,7 +1175,7 @@ function startGame() {
       height: 300,
     },
     {
-      x_pos: 1290,
+      x_pos: 1340,
       y_pos: 420,
       width: 170,
       height: 300,
@@ -1267,21 +1261,21 @@ function startGame() {
   canyons = [
     {
       x_pos: 348,
-      width: 80,
+      width: 100,
     },
     {
       x_pos: 948,
-      width: 80,
+      width: 100,
     },
     {
       x_pos: 1230,
-      width: 80,
+      width: 180,
     },
   ];
 
   platforms = [];
 
-  platforms.push(createPlatforms(500, floorPos_y - 100, 100));
+  platforms.push(createPlatforms(1210, floorPos_y - 50, 40));
 
   // Each water animation requires it's own array and cycle count.
   // Arrays to store water animation frames.
@@ -1373,7 +1367,7 @@ function checkPlayerDie() {
   // Restart the player's position and subtract a life after a fall into the canyon.
   if (gameChar_y > height + 100) {
     scrollPos = 0;
-    gameChar_x = width - 830;
+    gameChar_x = 100;
     gameChar_y = floorPos_y;
     isPlummeting = false;
     game_score = 0;
@@ -1415,17 +1409,17 @@ function loseGame() {
 function winGame() {
   // Make the character go up the stairs, stand on the cabin's porch, and give
   // winning message.
-  if (gameChar_world_x > 1558) {
-    gameChar_y = cabin_y + 398;
+  if (gameChar_world_x > cabin.x + 534) {
+    gameChar_y = cabin.y + 398;
   }
-  if (gameChar_world_x > 1570) {
-    gameChar_y = cabin_y + 386;
+  if (gameChar_world_x > cabin.x + 546) {
+    gameChar_y = cabin.y + 386;
   }
-  if (gameChar_world_x > 1575) {
-    gameChar_y = cabin_y + 370;
+  if (gameChar_world_x > cabin.x + 551) {
+    gameChar_y = cabin.y + 370;
   }
-  if (gameChar_world_x > 1580) {
-    gameChar_y = cabin_y + 363;
+  if (gameChar_world_x > cabin.x + 556) {
+    gameChar_y = cabin.y + 363;
     isFalling = false;
     textSize(84);
     stroke("black");
@@ -1449,7 +1443,7 @@ function winGame() {
 // Function to restart the game.
 function playAgain() {
   scrollPos = 0;
-  gameChar_x = width - 830;
+  gameChar_x = 100;
   gameChar_y = floorPos_y;
   isPlummeting = false;
   flagpole.isReached = false;
@@ -1466,8 +1460,14 @@ function createPlatforms(x, y, length) {
     y: y,
     length: length,
     draw: function () {
-      fill(255, 0, 255);
-      rect(this.x, this.y, this.length, 20);
+      //   fill("#1AF05A");
+      //   rect(this.x, this.y, this.length, 5);
+      fill("#01a232");
+      rect(this.x, this.y, this.length, 5);
+      fill("#A30302");
+      rect(this.x, this.y + 5, this.length, 5);
+      fill("#570100");
+      rect(this.x, this.y + 10, this.length, 5);
     },
     checkContact: function (gc_x, gc_y) {
       if (gc_x > this.x && gc_x < this.x + this.length) {
