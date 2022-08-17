@@ -20,11 +20,6 @@ var isLeft;
 var isRight;
 var isFalling;
 var isPlummeting;
-// var isJumpRight;
-// var isJumpLeft;
-// var isJumping;
-// var walkLeftCycle;
-// var walkRightCycle;
 
 // ------------------
 // Background objects
@@ -230,9 +225,10 @@ function mouseClicked() {
 // ------------------------------
 
 function drawGameChar() {
+  let charColor = "AliceBlue";
   if (isLeft && isFalling) {
     // jumping-right
-    fill("#98D936");
+    fill(charColor);
     rect(gameChar_x - 18, gameChar_y - 67, 38, 60, 5, 20, 5, 20);
     drawingContext.filter = "blur(15px)";
     rect(gameChar_x - 18, gameChar_y - 67, 38, 60, 5, 20, 5, 20);
@@ -251,7 +247,7 @@ function drawGameChar() {
     ellipse(gameChar_x - 16, gameChar_y - 44, 5, 17);
   } else if (isRight && isFalling) {
     // jumping-left
-    fill("#98D936");
+    fill(charColor);
     rect(gameChar_x - 18, gameChar_y - 67, 38, 60, 20, 5, 20, 5);
     drawingContext.filter = "blur(15px)";
     rect(gameChar_x - 18, gameChar_y - 67, 38, 60, 20, 5, 20, 5);
@@ -269,7 +265,7 @@ function drawGameChar() {
     fill("#01261C");
     ellipse(gameChar_x + 16, gameChar_y - 44, 5, 17);
   } else if (isLeft) {
-    fill("#98D936");
+    fill(charColor);
     rect(gameChar_x - 18, gameChar_y - 57, 38, 60, 5, 20, 5, 20);
     drawingContext.filter = "blur(15px)";
     rect(gameChar_x - 18, gameChar_y - 57, 38, 60, 5, 20, 5, 20);
@@ -279,7 +275,7 @@ function drawGameChar() {
     fill("#01261C");
     ellipse(gameChar_x - 16, gameChar_y - 34, 5, 17);
   } else if (isRight) {
-    fill("#98D936");
+    fill(charColor);
     rect(gameChar_x - 18, gameChar_y - 57, 38, 60, 20, 5, 20, 5);
     drawingContext.filter = "blur(15px)";
     rect(gameChar_x - 18, gameChar_y - 57, 38, 60, 20, 5, 20, 5);
@@ -290,7 +286,7 @@ function drawGameChar() {
     ellipse(gameChar_x + 17, gameChar_y - 34, 5, 17);
   } else if (isFalling || isPlummeting) {
     // body
-    fill("#98D936");
+    fill(charColor);
     rect(gameChar_x - 23, gameChar_y - 67, 46, 60, 5, 5, 0, 0);
     drawingContext.filter = "blur(15px)";
     rect(gameChar_x - 23, gameChar_y - 67, 46, 60, 5, 5, 0, 0);
@@ -340,7 +336,7 @@ function drawGameChar() {
   } else {
     // standing front facing
     // body
-    fill("#98D936");
+    fill(charColor);
     rect(gameChar_x - 23, gameChar_y - 57, 46, 60, 5, 5, 5, 5);
     drawingContext.filter = "blur(15px)";
     rect(gameChar_x - 23, gameChar_y - 57, 46, 60, 5, 5, 5, 5);
@@ -377,104 +373,39 @@ function drawGameChar() {
 function moveGameChar() {
   // Make the character run left.
   if (isLeft) {
-    // Stop character from moving after reaching the cabin.
-    if (gameChar_world_x > 1640) {
-      isLeft = false;
-    }
     // Move the character unless the player reaches the cabin.
     if (gameChar_x > width * 0.2 && gameChar_world_x < 1640) {
-      gameChar_x -= 2;
+      gameChar_x -= 7;
     } else if (gameChar_world_x < 1640) {
-      scrollPos += 2;
+      scrollPos += 7;
     }
   }
   // Make the character run right.
   if (isRight) {
-    // Stop character from moving after reaching the cabin.
-    if (gameChar_world_x > 1640) {
-      isRight = false;
-    }
     // Move the character unless the player reaches the cabin.
     if (gameChar_x < width * 0.8) {
-      gameChar_x += 2;
+      gameChar_x += 7;
     } else if (gameChar_world_x < 1640) {
-      scrollPos -= 2; // negative for moving against the background
+      scrollPos -= 7; // negative for moving against the background
     }
   }
 
   // Make the character jump left.
   if (isLeft && isFalling) {
-    // Draw the character jumping to the left
-    // Use for loop for a smooth jump
-    // for (let i = 0; i < 7; i++) {
-    //   gameChar_y -= 1;
-    //   // stop the character from going beyond 70 from the ground
-    //   if (gameChar_y < floorPos_y - 70) {
-    //     gameChar_y = floorPos_y - 70;
-    //     // stop the player from holding the space bar to float in the air
-    //     //isFalling = false;
-    //   }
-    // }
-    // Stop character from moving after reaching the cabin.
-    if (gameChar_world_x > 1640) {
-      isLeft = false;
-    }
-    // Move the character unless the player reaches the cabin.
     if (gameChar_x > width * 0.2 && gameChar_world_x < 1640) {
-      gameChar_x -= 3;
-    } else if (gameChar_world_x < 1640) {
-      scrollPos += 3;
+      gameChar_x += 1;
+    } else {
+      scrollPos -= 1;
     }
   }
-  // Draw the character jumping to the left if the player jumps straight up
-  // and then moves left.
-  //   if (gameChar_y < floorPos_y && isLeft) {
-  //     isJumpLeft = true;
-  //   }
-
   // Make the character jump right.
   if (isRight && isFalling) {
-    // // Draw the character jumping to the right
-    // // Use for loop for a smooth jump
-    // for (let i = 0; i < 7; i++) {
-    //   gameChar_y -= 1;
-    //   // stop the character from going beyond 70 from the ground
-    //   if (gameChar_y < floorPos_y - 70) {
-    //     gameChar_y = floorPos_y - 70;
-    //     // stop the player from holding the space bar to float in the air
-    //     //isFalling = false;
-    //   }
-    // }
-    // Stop character from moving after reaching the cabin.
-    if (gameChar_world_x > 1640) {
-      isRight = false;
-    }
-    // Move the character unless the player reaches the cabin.
     if (gameChar_x < width * 0.8) {
-      gameChar_x += 3;
-    } else if (gameChar_world_x < 1640) {
-      scrollPos -= 3; // negative for moving against the background
+      gameChar_x -= 1;
+    } else {
+      scrollPos += 1; // negative for moving against the background
     }
   }
-  // Draw the character jumping to the right if the player jumps straight up
-  // and then moves right.
-  //   if (gameChar_y < floorPos_y && isRight) {
-  //     isJumpRight = true;
-  //   }
-
-  // Make the character jump up.
-  //   if (isFalling) {
-  //     // Use for loop for a smooth jump
-  //     for (let i = 0; i < 10; i++) {
-  //       gameChar_y -= 1;
-  //     }
-  //     // stop the character from going beyond 100 from the ground
-  //     if (gameChar_y < floorPos_y - 100) {
-  //       gameChar_y = floorPos_y - 100;
-  //       // stop the player from holding the space bar to float in the air
-  //       isFalling = false;
-  //     }
-  //   }
 
   // Make the character fall if above the ground. - Gravity
   if (gameChar_y < floorPos_y) {
@@ -482,7 +413,6 @@ function moveGameChar() {
     for (let i = 0; i < platforms.length; i++) {
       if (platforms[i].checkContact(gameChar_world_x, gameChar_y)) {
         isContact = true;
-        //gameChar_y = platforms[i].y;
         break;
       }
     }
@@ -498,15 +428,8 @@ function moveGameChar() {
 
   // Make the character fall faster if it's in the canyon.
   if (isPlummeting) {
-    gameChar_y += 8;
+    gameChar_y += 24;
   }
-
-  // If at ground level then face forward.
-  //   if (gameChar_y >= floorPos_y) {
-  //     isJumping = false;
-  //     isJumpLeft = false;
-  //     isJumpRight = false;
-  //   }
 
   // Stop the character from going off the left side of the screen.
   if (gameChar_world_x < 194) {
@@ -1465,6 +1388,7 @@ function checkPlayerDie() {
 function loseGame() {
   scrollPos = 0;
   gameChar_y = floorPos_y + height;
+  noStroke();
   fill("grey");
   rect(100, floorPos_y - 30, 30, 30);
   ellipse(115, floorPos_y - 30, 30);
