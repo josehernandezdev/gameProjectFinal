@@ -3,6 +3,8 @@
 The Game Project 7/8 - Make it awesome!
 
 */
+//
+var gameState;
 // -----------
 // Positioning
 // -----------
@@ -43,13 +45,33 @@ var platforms;
 // ---------------
 // Water animation
 // ---------------
-var water_array;
+var water_array = [];
 var water_cycle;
 var img;
+
+// -------
+// Enemies
+// -------
+var enemies;
+
+// ------
+// Sounds
+// ------
+var jumpSound;
+var deathSound;
+var gameSound;
 
 // Preload font used in game.
 function preload() {
   fontRobotoBold = loadFont("assets/Roboto-Bold.ttf");
+
+  soundFormats("mp3", "wav");
+  jumpSound = loadSound("assets/jumpSound.wav");
+  jumpSound.setVolume(0.4);
+  //   deathSound = loadSound("assets/death.wav");
+  //   deathSound.setVolume(0.1);
+  gameSound = loadSound("assets/game.mp3");
+  gameSound.setVolume(0.1);
 }
 
 function setup() {
@@ -165,6 +187,8 @@ function draw() {
   if (flagpole.isReached) {
     winGame();
   }
+
+  drawBeginButton();
 }
 
 // ---------------------
@@ -173,19 +197,24 @@ function draw() {
 
 function keyPressed() {
   // left arrow
-  if (keyCode == 37) {
+  if (keyCode == 37 && gameState == "begin") {
     isLeft = true;
   }
 
   // right arrow
-  if (keyCode == 39) {
+  if (keyCode == 39 && gameState == "begin") {
     isRight = true;
   }
 
   // space bar
-  if (keyCode == 32 || keyCode == 231 || keyCode == 0) {
+  if (
+    keyCode == 32 ||
+    keyCode == 231 ||
+    (keyCode == 0 && gameState == "begin")
+  ) {
     if (!isFalling) {
       gameChar_y -= 100;
+      jumpSound.play();
     }
   }
 }
@@ -206,6 +235,11 @@ function mouseClicked() {
   // If the player clicks the mouse when over the restart button, restart the game.
   if (mouseX > 465 && mouseX < 575 && mouseY > 305 && mouseY < 345) {
     playAgain();
+  }
+  // can't be in the same spot as above
+  rect(50, 307, 106, 36, 10);
+  if (mouseX > 50 && mouseX < 156 && mouseY > 307 && mouseY < 343) {
+    beginButton();
   }
 }
 
@@ -1098,6 +1132,8 @@ function drawCollectableCounter() {
 
 // Function to start game.
 function startGame() {
+  gameState = "waiting";
+
   gameChar_x = 100;
   gameChar_y = floorPos_y;
   // Variable to control the background scrolling.
@@ -1275,6 +1311,8 @@ function startGame() {
 
   platforms = [];
 
+  enemies = [];
+
   platforms.push(createPlatforms(1210, floorPos_y - 50, 40));
 
   // Each water animation requires it's own array and cycle count.
@@ -1325,6 +1363,23 @@ function startGame() {
       y_pos: -35,
     },
   ];
+}
+
+function drawBeginButton() {
+  if (gameState == "waiting") {
+    fill("black");
+    rect(50, 307, 106, 36, 10);
+    fill("#0FCAFF");
+    rect(53, 310, 100, 30, 10);
+    fill("white");
+    textSize(16);
+    text("Begin Game", 60, 330);
+  }
+}
+function beginButton() {
+  // Set game state to start.
+  gameState = "begin";
+  gameSound.loop();
 }
 
 // Function to draw live counter.
@@ -1481,3 +1536,5 @@ function createPlatforms(x, y, length) {
   };
   return p;
 }
+
+function Enemies() {}
