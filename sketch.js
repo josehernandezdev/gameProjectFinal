@@ -39,8 +39,6 @@ var flagpole;
 var game_score;
 var liveShapes;
 var lives;
-var tryAgain;
-var replay;
 var platforms;
 // ---------------
 // Water animation
@@ -58,8 +56,11 @@ var enemies;
 // Sounds
 // ------
 var jumpSound;
+var waterSound;
 var deathSound;
 var gameSound;
+var coinSound;
+var achievementSound;
 
 // Preload font used in game.
 function preload() {
@@ -68,10 +69,16 @@ function preload() {
   soundFormats("mp3", "wav");
   jumpSound = loadSound("assets/jumpSound.wav");
   jumpSound.setVolume(0.4);
-  //   deathSound = loadSound("assets/death.wav");
-  //   deathSound.setVolume(0.1);
+  deathSound = loadSound("assets/deathSound.wav");
+  deathSound.setVolume(0.1);
   gameSound = loadSound("assets/game.mp3");
   gameSound.setVolume(0.1);
+  coinSound = loadSound("assets/coinSound.wav");
+  coinSound.setVolume(0.1);
+  achievementSound = loadSound("assets/Achievement.mp3");
+  achievementSound.setVolume(0.3);
+  waterSound = loadSound("assets/waterSound.wav");
+  waterSound.setVolume(0.1);
 }
 
 function setup() {
@@ -235,6 +242,7 @@ function mouseClicked() {
   // If the player clicks the mouse when over the restart button, restart the game.
   if (mouseX > 465 && mouseX < 575 && mouseY > 305 && mouseY < 345) {
     playAgain();
+    loop();
   }
   // can't be in the same spot as above
   rect(50, 307, 106, 36, 10);
@@ -1039,6 +1047,7 @@ function checkCanyon(t_canyon) {
     isLeft = false;
     isRight = false;
     isPlummeting = true;
+    waterSound.play();
   }
 }
 
@@ -1107,6 +1116,7 @@ function checkCollectable(t_collectable) {
   ) {
     t_collectable.isFound = true;
     game_score += 1;
+    coinSound.play();
   }
 }
 
@@ -1133,7 +1143,6 @@ function drawCollectableCounter() {
 // Function to start game.
 function startGame() {
   gameState = "waiting";
-
   gameChar_x = 100;
   gameChar_y = floorPos_y;
   // Variable to control the background scrolling.
@@ -1435,6 +1444,7 @@ function checkPlayerDie() {
 
 // Function to end game after player loses all life.
 function loseGame() {
+  noLoop();
   scrollPos = 0;
   gameChar_y = floorPos_y + height;
   noStroke();
@@ -1457,6 +1467,8 @@ function loseGame() {
   fill("white");
   textSize(18);
   text("Try Again", 483, 330);
+  gameSound.stop();
+  deathSound.play();
   return;
 }
 
@@ -1473,7 +1485,7 @@ function winGame() {
   if (gameChar_world_x > cabin.x + 551) {
     gameChar_y = cabin.y + 370;
   }
-  if (gameChar_world_x > cabin.x + 556) {
+  if (gameChar_world_x > cabin.x + 586) {
     gameChar_y = cabin.y + 363;
     isFalling = false;
     textSize(84);
@@ -1492,6 +1504,9 @@ function winGame() {
     fill("white");
     textSize(18);
     text("Play Again", 478, 331);
+    gameSound.stop();
+    achievementSound.play();
+    noLoop();
   }
 }
 
@@ -1503,6 +1518,9 @@ function playAgain() {
   isPlummeting = false;
   flagpole.isReached = false;
   game_score = 0;
+  // stop and start the game sound so it does not overlap
+  gameSound.stop();
+  gameSound.loop();
   lives = 3;
   for (var i = 0; i < collectables.length; i++) {
     collectables[i].isFound = false;
