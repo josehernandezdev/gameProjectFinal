@@ -5,6 +5,7 @@ The Game Project 7/8 - Make it awesome!
 */
 //
 var gameState;
+var gameOver;
 // -----------
 // Positioning
 // -----------
@@ -37,8 +38,8 @@ var isFound; // make collectables disappear
 var cabin;
 var flagpole;
 var game_score;
-var liveShapes;
-var lives;
+var lifeShapes;
+var lifes;
 var platforms;
 // ---------------
 // Water animation
@@ -70,22 +71,24 @@ function preload() {
   jumpSound = loadSound("assets/jumpSound.wav");
   jumpSound.setVolume(0.4);
   deathSound = loadSound("assets/deathSound.wav");
-  deathSound.setVolume(0.1);
+  deathSound.setVolume(0.3);
+  deathSound.playMode("restart");
   gameSound = loadSound("assets/game.mp3");
-  gameSound.setVolume(0.1);
+  gameSound.setVolume(0.3);
   coinSound = loadSound("assets/coinSound.wav");
-  coinSound.setVolume(0.1);
+  coinSound.setVolume(0.2);
   achievementSound = loadSound("assets/Achievement.mp3");
   achievementSound.setVolume(0.3);
   waterSound = loadSound("assets/waterSound.wav");
-  waterSound.setVolume(0.1);
+  waterSound.setVolume(0.5);
+  waterSound.playMode("restart");
 }
 
 function setup() {
   createCanvas(1024, 576);
   floorPos_y = (height * 3) / 4;
   // Variable to count life left.
-  lives = 3;
+  lifes = 3;
 
   startGame();
 }
@@ -149,10 +152,13 @@ function draw() {
 
   pop(); // End scrolling background.
 
-  drawCollectableCounter();
-
-  for (var i = 0; i < lives; i++) {
-    drawLiveCounter(liveShapes[i]);
+  if (!gameOver) {
+    drawCollectableCounter();
+    for (var i = 0; i < lifes; i++) {
+      drawLifeCounter(lifeShapes[i]);
+    }
+  } else {
+    noLoop();
   }
 
   drawGameChar();
@@ -182,8 +188,8 @@ function draw() {
   // Check if the player falls into a canyon and dies.
   checkPlayerDie();
 
-  // If the player loses all his lives, then the game is over.
-  if (lives < 1) {
+  // If the player loses all his lifes, then the game is over.
+  if (lifes < 1) {
     loseGame();
   }
 
@@ -328,9 +334,9 @@ function drawGameChar() {
   } else if (isFalling || isPlummeting) {
     // body
     fill(charColor);
-    rect(gameChar_x - 23, gameChar_y - 67, 46, 60, 5, 5, 0, 0);
+    rect(gameChar_x - 23, gameChar_y - 67, 46, 60, 20, 20, 5, 5);
     drawingContext.filter = "blur(15px)";
-    rect(gameChar_x - 23, gameChar_y - 67, 46, 60, 5, 5, 0, 0);
+    rect(gameChar_x - 23, gameChar_y - 67, 46, 60, 20, 20, 0, 0);
     drawingContext.filter = "none";
     // legs
     beginShape();
@@ -378,9 +384,9 @@ function drawGameChar() {
     // standing front facing
     // body
     fill(charColor);
-    rect(gameChar_x - 23, gameChar_y - 57, 46, 60, 5, 5, 5, 5);
+    rect(gameChar_x - 23, gameChar_y - 57, 46, 60, 20, 20, 5, 5);
     drawingContext.filter = "blur(15px)";
-    rect(gameChar_x - 23, gameChar_y - 57, 46, 60, 5, 5, 5, 5);
+    rect(gameChar_x - 23, gameChar_y - 57, 46, 60, 20, 20, 5, 5);
     drawingContext.filter = "none";
     // eyes
     fill("#F2ECE4");
@@ -1143,6 +1149,7 @@ function drawCollectableCounter() {
 // Function to start game.
 function startGame() {
   gameState = "waiting";
+  gameOver = false;
   gameChar_x = 100;
   gameChar_y = floorPos_y;
   // Variable to control the background scrolling.
@@ -1214,7 +1221,7 @@ function startGame() {
       height: 300,
     },
     {
-      x_pos: 640,
+      x_pos: 600,
       y_pos: 420,
       width: 170,
       height: 300,
@@ -1310,7 +1317,7 @@ function startGame() {
     },
     {
       x_pos: 948,
-      width: 100,
+      width: 180,
     },
     {
       x_pos: 1230,
@@ -1322,7 +1329,11 @@ function startGame() {
 
   enemies = [];
 
+  // platform factory
   platforms.push(createPlatforms(1210, floorPos_y - 50, 40));
+  platforms.push(createPlatforms(600, floorPos_y - 50, 40));
+  platforms.push(createPlatforms(665, floorPos_y - 106, 40));
+  platforms.push(createPlatforms(780, floorPos_y - 146, 40));
 
   // Each water animation requires it's own array and cycle count.
   // Arrays to store water animation frames.
@@ -1358,7 +1369,7 @@ function startGame() {
     },
   ];
 
-  liveShapes = [
+  lifeShapes = [
     {
       x_pos: 790,
       y_pos: -35,
@@ -1377,6 +1388,8 @@ function startGame() {
 function drawBeginButton() {
   if (gameState == "waiting") {
     fill("black");
+    textSize(24);
+    text("Click", 75, 300);
     rect(50, 307, 106, 36, 10);
     fill("#0FCAFF");
     rect(53, 310, 100, 30, 10);
@@ -1391,38 +1404,38 @@ function beginButton() {
   gameSound.loop();
 }
 
-// Function to draw live counter.
-function drawLiveCounter(t_live) {
+// Function to draw life counter.
+function drawLifeCounter(t_life) {
   fill("#C91916");
-  ellipse(t_live.x_pos + 66.6, t_live.y_pos + 66.6, 20, 20);
-  ellipse(t_live.x_pos + 83.2, t_live.y_pos + 66.6, 20, 20);
+  ellipse(t_life.x_pos + 66.6, t_life.y_pos + 66.6, 20, 20);
+  ellipse(t_life.x_pos + 83.2, t_life.y_pos + 66.6, 20, 20);
   triangle(
-    t_live.x_pos + 91.2,
-    t_live.y_pos + 72.6,
-    t_live.x_pos + 75,
-    t_live.y_pos + 95,
-    t_live.x_pos + 58.6,
-    t_live.y_pos + 72.6
+    t_life.x_pos + 91.2,
+    t_life.y_pos + 72.6,
+    t_life.x_pos + 75,
+    t_life.y_pos + 95,
+    t_life.x_pos + 58.6,
+    t_life.y_pos + 72.6
   );
-  ellipse(t_live.x_pos + 66.6, t_live.y_pos + 66.6, 20, 20);
-  ellipse(t_live.x_pos + 83.2, t_live.y_pos + 66.6, 20, 20);
+  ellipse(t_life.x_pos + 66.6, t_life.y_pos + 66.6, 20, 20);
+  ellipse(t_life.x_pos + 83.2, t_life.y_pos + 66.6, 20, 20);
   triangle(
-    t_live.x_pos + 91.2,
-    t_live.y_pos + 72.6,
-    t_live.x_pos + 75,
-    t_live.y_pos + 95,
-    t_live.x_pos + 58.6,
-    t_live.y_pos + 72.6
+    t_life.x_pos + 91.2,
+    t_life.y_pos + 72.6,
+    t_life.x_pos + 75,
+    t_life.y_pos + 95,
+    t_life.x_pos + 58.6,
+    t_life.y_pos + 72.6
   );
-  ellipse(t_live.x_pos + 66.6, t_live.y_pos + 66.6, 20, 20);
-  ellipse(t_live.x_pos + 83.2, t_live.y_pos + 66.6, 20, 20);
+  ellipse(t_life.x_pos + 66.6, t_life.y_pos + 66.6, 20, 20);
+  ellipse(t_life.x_pos + 83.2, t_life.y_pos + 66.6, 20, 20);
   triangle(
-    t_live.x_pos + 91.2,
-    t_live.y_pos + 72.6,
-    t_live.x_pos + 75,
-    t_live.y_pos + 95,
-    t_live.x_pos + 58.6,
-    t_live.y_pos + 72.6
+    t_life.x_pos + 91.2,
+    t_life.y_pos + 72.6,
+    t_life.x_pos + 75,
+    t_life.y_pos + 95,
+    t_life.x_pos + 58.6,
+    t_life.y_pos + 72.6
   );
 }
 
@@ -1435,7 +1448,7 @@ function checkPlayerDie() {
     gameChar_y = floorPos_y;
     isPlummeting = false;
     game_score = 0;
-    lives -= 1;
+    lifes -= 1;
     for (var i = 0; i < collectables.length; i++) {
       collectables[i].isFound = false;
     }
@@ -1444,7 +1457,7 @@ function checkPlayerDie() {
 
 // Function to end game after player loses all life.
 function loseGame() {
-  noLoop();
+  gameOver = true;
   scrollPos = 0;
   gameChar_y = floorPos_y + height;
   noStroke();
@@ -1518,10 +1531,11 @@ function playAgain() {
   isPlummeting = false;
   flagpole.isReached = false;
   game_score = 0;
+  gameOver = false;
   // stop and start the game sound so it does not overlap
   gameSound.stop();
   gameSound.loop();
-  lives = 3;
+  lifes = 3;
   for (var i = 0; i < collectables.length; i++) {
     collectables[i].isFound = false;
   }
@@ -1533,8 +1547,6 @@ function createPlatforms(x, y, length) {
     y: y,
     length: length,
     draw: function () {
-      //   fill("#1AF05A");
-      //   rect(this.x, this.y, this.length, 5);
       fill("#01a232");
       rect(this.x, this.y, this.length, 5);
       fill("#A30302");
@@ -1543,7 +1555,7 @@ function createPlatforms(x, y, length) {
       rect(this.x, this.y + 10, this.length, 5);
     },
     checkContact: function (gc_x, gc_y) {
-      if (gc_x > this.x && gc_x < this.x + this.length) {
+      if (gc_x > this.x - 5 && gc_x < this.x + this.length + 5) {
         var d = this.y - gc_y;
         if (d >= 0 && d < 5) {
           return true;
