@@ -1361,6 +1361,7 @@ function startGame() {
 
   // extra life factory
   extraLife.push(createExtraLife(775, floorPos_y - 255));
+  extraLife.push(createExtraLife(985, floorPos_y - 135));
 
   // Each water animation requires it's own array and cycle count.
   // Arrays to store water animation frames.
@@ -1611,6 +1612,8 @@ function playAgain() {
   for (var i = 0; i < collectables.length; i++) {
     collectables[i].isFound = false;
   }
+  extraLife.push(createExtraLife(775, floorPos_y - 255));
+  extraLife.push(createExtraLife(985, floorPos_y - 135));
 }
 
 function createPlatforms(x, y, length) {
