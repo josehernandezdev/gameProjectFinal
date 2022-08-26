@@ -38,8 +38,9 @@ var isFound; // make collectables disappear
 var cabin;
 var flagpole;
 var game_score;
-var lifeShapes;
+var lifeCounter;
 var lifes;
+var extraLife;
 var platforms;
 // ---------------
 // Water animation
@@ -68,20 +69,29 @@ function preload() {
   fontRobotoBold = loadFont("assets/Roboto-Bold.ttf");
 
   soundFormats("mp3", "wav");
+
   jumpSound = loadSound("assets/jumpSound.wav");
   jumpSound.setVolume(0.4);
+
   deathSound = loadSound("assets/deathSound.wav");
   deathSound.setVolume(0.3);
   deathSound.playMode("restart");
+
   gameSound = loadSound("assets/game.mp3");
   gameSound.setVolume(0.3);
+
   coinSound = loadSound("assets/coinSound.wav");
   coinSound.setVolume(0.2);
+
   achievementSound = loadSound("assets/Achievement.mp3");
   achievementSound.setVolume(0.3);
+
   waterSound = loadSound("assets/waterSound.wav");
   waterSound.setVolume(0.5);
   waterSound.playMode("restart");
+
+  lifeSound = loadSound("assets/lifeSound.wav");
+  lifeSound.setVolume(0.5);
 }
 
 function setup() {
@@ -127,6 +137,19 @@ function draw() {
     platforms[i].draw();
   }
 
+  for (let i = 0; i < extraLife.length; i++) {
+    if (extraLife.length > 0) {
+      extraLife[i].draw();
+      if (extraLife[i].checkContact(gameChar_world_x, gameChar_y)) {
+        lifeSound.play();
+        extraLife.splice(i, 1);
+        if (lifes < 3) {
+          lifes++;
+        }
+      }
+    }
+  }
+
   // Draw canyon and check if player falls in canyon.
   for (var i = 0; i < canyons.length; i++) {
     drawCanyon(canyons[i]);
@@ -155,7 +178,7 @@ function draw() {
   if (!gameOver) {
     drawCollectableCounter();
     for (var i = 0; i < lifes; i++) {
-      drawLifeCounter(lifeShapes[i]);
+      drawLifeCounter(lifeCounter[i]);
     }
   } else {
     noLoop();
@@ -1143,7 +1166,7 @@ function drawCollectableCounter() {
 }
 
 // -------------------------
-// Fuctions to start/end the game.
+// Functions to start/end the game.
 // -------------------------
 
 // Function to start game.
@@ -1153,7 +1176,6 @@ function startGame() {
   gameChar_x = 100;
   gameChar_y = floorPos_y;
   // Variable to control the background scrolling.
-  // Subract width and 300 to work on cabin. Set to 0 to reset.
   scrollPos = 0;
 
   // Boolean variables to control the movement of the game character.
@@ -1327,6 +1349,8 @@ function startGame() {
 
   platforms = [];
 
+  extraLife = [];
+
   enemies = [];
 
   // platform factory
@@ -1334,6 +1358,9 @@ function startGame() {
   platforms.push(createPlatforms(600, floorPos_y - 50, 40));
   platforms.push(createPlatforms(665, floorPos_y - 106, 40));
   platforms.push(createPlatforms(780, floorPos_y - 146, 40));
+
+  // extra life factory
+  extraLife.push(createExtraLife(775, floorPos_y - 255));
 
   // Each water animation requires it's own array and cycle count.
   // Arrays to store water animation frames.
@@ -1369,7 +1396,7 @@ function startGame() {
     },
   ];
 
-  lifeShapes = [
+  lifeCounter = [
     {
       x_pos: 790,
       y_pos: -35,
@@ -1404,6 +1431,51 @@ function beginButton() {
   gameSound.loop();
 }
 
+function createExtraLife(x, y) {
+  life = {
+    x: x,
+    y: y,
+    draw: function () {
+      fill("#C91916");
+      ellipse(this.x + 66.6, this.y + 66.6, 20, 20);
+      ellipse(this.x + 83.2, this.y + 66.6, 20, 20);
+      triangle(
+        this.x + 91.2,
+        this.y + 72.6,
+        this.x + 75,
+        this.y + 95,
+        this.x + 58.6,
+        this.y + 72.6
+      );
+      ellipse(this.x + 66.6, this.y + 66.6, 20, 20);
+      ellipse(this.x + 83.2, this.y + 66.6, 20, 20);
+      triangle(
+        this.x + 91.2,
+        this.y + 72.6,
+        this.x + 75,
+        this.y + 95,
+        this.x + 58.6,
+        this.y + 72.6
+      );
+      ellipse(this.x + 66.6, this.y + 66.6, 20, 20);
+      ellipse(this.x + 83.2, this.y + 66.6, 20, 20);
+      triangle(
+        this.x + 91.2,
+        this.y + 72.6,
+        this.x + 75,
+        this.y + 95,
+        this.x + 58.6,
+        this.y + 72.6
+      );
+    },
+    checkContact: function (gc_x, gc_y) {
+      if (dist(gc_x, gc_y, this.x + 75, this.y + 70) < 30) {
+        return true;
+      }
+    },
+  };
+  return life;
+}
 // Function to draw life counter.
 function drawLifeCounter(t_life) {
   fill("#C91916");
