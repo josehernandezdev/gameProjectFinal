@@ -29,8 +29,8 @@ var isPlummeting;
 // ------------------
 var clouds;
 var mountains;
-var MidHills;
-var BackHills;
+var midHills;
+var backHills;
 var trees_x;
 var canyons;
 var collectables;
@@ -530,119 +530,119 @@ function drawGround() {
 
 // Function to draw midground hill objects.
 function drawMidHills() {
-  for (var i = 0; i < MidHills.length; i++) {
+  for (var i = 0; i < midHills.length; i++) {
     fill("#47AD66");
     rect(
-      MidHills[i].valley_x_pos,
-      MidHills[i].valley_y_pos,
-      MidHills[i].valley_width,
-      MidHills[i].valley_height
+      midHills[i].valley_x_pos,
+      midHills[i].valley_y_pos,
+      midHills[i].valley_width,
+      midHills[i].valley_height
     );
     rect(
-      MidHills[i].hill_x_pos,
-      MidHills[i].hill_y_pos,
-      MidHills[i].hill_width,
-      MidHills[i].hill_height
+      midHills[i].hill_x_pos,
+      midHills[i].hill_y_pos,
+      midHills[i].hill_width,
+      midHills[i].hill_height
     );
-    rect(MidHills[i].hill_x_pos + 30, MidHills[i].hill_y_pos - 15, 15, 15);
+    rect(midHills[i].hill_x_pos + 30, midHills[i].hill_y_pos - 15, 15, 15);
     triangle(
-      MidHills[i].hill_x_pos + 15,
-      MidHills[i].hill_y_pos - 15,
-      MidHills[i].hill_x_pos + 38,
-      MidHills[i].hill_y_pos - 50,
-      MidHills[i].hill_x_pos + 60,
-      MidHills[i].hill_y_pos - 15
+      midHills[i].hill_x_pos + 15,
+      midHills[i].hill_y_pos - 15,
+      midHills[i].hill_x_pos + 38,
+      midHills[i].hill_y_pos - 50,
+      midHills[i].hill_x_pos + 60,
+      midHills[i].hill_y_pos - 15
     );
-    rect(MidHills[i].hill_x_pos + 160, MidHills[i].hill_y_pos - 15, 15, 15);
+    rect(midHills[i].hill_x_pos + 160, midHills[i].hill_y_pos - 15, 15, 15);
     triangle(
-      MidHills[i].hill_x_pos + 145,
-      MidHills[i].hill_y_pos - 15,
-      MidHills[i].hill_x_pos + 168,
-      MidHills[i].hill_y_pos - 50,
-      MidHills[i].hill_x_pos + 190,
-      MidHills[i].hill_y_pos - 15
+      midHills[i].hill_x_pos + 145,
+      midHills[i].hill_y_pos - 15,
+      midHills[i].hill_x_pos + 168,
+      midHills[i].hill_y_pos - 50,
+      midHills[i].hill_x_pos + 190,
+      midHills[i].hill_y_pos - 15
     );
-    rect(MidHills[i].hill_x_pos + 260, MidHills[i].valley_y_pos - 15, 15, 15);
+    rect(midHills[i].hill_x_pos + 260, midHills[i].valley_y_pos - 15, 15, 15);
     triangle(
-      MidHills[i].hill_x_pos + 245,
-      MidHills[i].valley_y_pos - 15,
-      MidHills[i].hill_x_pos + 268,
-      MidHills[i].valley_y_pos - 50,
-      MidHills[i].hill_x_pos + 290,
-      MidHills[i].valley_y_pos - 15
+      midHills[i].hill_x_pos + 245,
+      midHills[i].valley_y_pos - 15,
+      midHills[i].hill_x_pos + 268,
+      midHills[i].valley_y_pos - 50,
+      midHills[i].hill_x_pos + 290,
+      midHills[i].valley_y_pos - 15
     );
-    rect(MidHills[i].hill_x_pos + 360, MidHills[i].valley_y_pos - 15, 15, 15);
+    rect(midHills[i].hill_x_pos + 360, midHills[i].valley_y_pos - 15, 15, 15);
     triangle(
-      MidHills[i].hill_x_pos + 345,
-      MidHills[i].valley_y_pos - 15,
-      MidHills[i].hill_x_pos + 368,
-      MidHills[i].valley_y_pos - 50,
-      MidHills[i].hill_x_pos + 390,
-      MidHills[i].valley_y_pos - 15
+      midHills[i].hill_x_pos + 345,
+      midHills[i].valley_y_pos - 15,
+      midHills[i].hill_x_pos + 368,
+      midHills[i].valley_y_pos - 50,
+      midHills[i].hill_x_pos + 390,
+      midHills[i].valley_y_pos - 15
     );
   }
 }
 
 // Function to draw background hill objects.
 function drawBackHills() {
-  for (var i = 0; i < BackHills.length; i++) {
+  for (var i = 0; i < backHills.length; i++) {
     fill("#63F28E");
     rect(
-      BackHills[i].valley_x_pos,
-      BackHills[i].valley_y_pos,
-      BackHills[i].valley_width,
-      BackHills[i].valley_height
+      backHills[i].valley_x_pos,
+      backHills[i].valley_y_pos,
+      backHills[i].valley_width,
+      backHills[i].valley_height
     );
     rect(
-      BackHills[i].hill_x_pos,
-      BackHills[i].hill_y_pos,
-      BackHills[i].hill_width,
-      BackHills[i].hill_height
+      backHills[i].hill_x_pos,
+      backHills[i].hill_y_pos,
+      backHills[i].hill_width,
+      backHills[i].hill_height
     );
-    rect(BackHills[i].hill_x_pos + 30, BackHills[i].hill_y_pos - 10, 10, 10);
+    rect(backHills[i].hill_x_pos + 30, backHills[i].hill_y_pos - 10, 10, 10);
     triangle(
-      BackHills[i].hill_x_pos + 20,
-      BackHills[i].hill_y_pos - 10,
-      BackHills[i].hill_x_pos + 35,
-      BackHills[i].hill_y_pos - 35,
-      BackHills[i].hill_x_pos + 50,
-      BackHills[i].hill_y_pos - 10
+      backHills[i].hill_x_pos + 20,
+      backHills[i].hill_y_pos - 10,
+      backHills[i].hill_x_pos + 35,
+      backHills[i].hill_y_pos - 35,
+      backHills[i].hill_x_pos + 50,
+      backHills[i].hill_y_pos - 10
     );
-    rect(BackHills[i].hill_x_pos + 95, BackHills[i].hill_y_pos - 10, 10, 10);
+    rect(backHills[i].hill_x_pos + 95, backHills[i].hill_y_pos - 10, 10, 10);
     triangle(
-      BackHills[i].hill_x_pos + 85,
-      BackHills[i].hill_y_pos - 10,
-      BackHills[i].hill_x_pos + 100,
-      BackHills[i].hill_y_pos - 35,
-      BackHills[i].hill_x_pos + 115,
-      BackHills[i].hill_y_pos - 10
+      backHills[i].hill_x_pos + 85,
+      backHills[i].hill_y_pos - 10,
+      backHills[i].hill_x_pos + 100,
+      backHills[i].hill_y_pos - 35,
+      backHills[i].hill_x_pos + 115,
+      backHills[i].hill_y_pos - 10
     );
-    rect(BackHills[i].hill_x_pos + 160, BackHills[i].hill_y_pos - 10, 10, 10);
+    rect(backHills[i].hill_x_pos + 160, backHills[i].hill_y_pos - 10, 10, 10);
     triangle(
-      BackHills[i].hill_x_pos + 150,
-      BackHills[i].hill_y_pos - 10,
-      BackHills[i].hill_x_pos + 165,
-      BackHills[i].hill_y_pos - 35,
-      BackHills[i].hill_x_pos + 180,
-      BackHills[i].hill_y_pos - 10
+      backHills[i].hill_x_pos + 150,
+      backHills[i].hill_y_pos - 10,
+      backHills[i].hill_x_pos + 165,
+      backHills[i].hill_y_pos - 35,
+      backHills[i].hill_x_pos + 180,
+      backHills[i].hill_y_pos - 10
     );
-    rect(BackHills[i].hill_x_pos + 260, BackHills[i].valley_y_pos - 10, 10, 10);
+    rect(backHills[i].hill_x_pos + 260, backHills[i].valley_y_pos - 10, 10, 10);
     triangle(
-      BackHills[i].hill_x_pos + 250,
-      BackHills[i].valley_y_pos - 10,
-      BackHills[i].hill_x_pos + 265,
-      BackHills[i].valley_y_pos - 35,
-      BackHills[i].hill_x_pos + 280,
-      BackHills[i].valley_y_pos - 10
+      backHills[i].hill_x_pos + 250,
+      backHills[i].valley_y_pos - 10,
+      backHills[i].hill_x_pos + 265,
+      backHills[i].valley_y_pos - 35,
+      backHills[i].hill_x_pos + 280,
+      backHills[i].valley_y_pos - 10
     );
-    rect(BackHills[i].hill_x_pos + 360, BackHills[i].valley_y_pos - 10, 10, 10);
+    rect(backHills[i].hill_x_pos + 360, backHills[i].valley_y_pos - 10, 10, 10);
     triangle(
-      BackHills[i].hill_x_pos + 350,
-      BackHills[i].valley_y_pos - 10,
-      BackHills[i].hill_x_pos + 365,
-      BackHills[i].valley_y_pos - 35,
-      BackHills[i].hill_x_pos + 380,
-      BackHills[i].valley_y_pos - 10
+      backHills[i].hill_x_pos + 350,
+      backHills[i].valley_y_pos - 10,
+      backHills[i].hill_x_pos + 365,
+      backHills[i].valley_y_pos - 35,
+      backHills[i].hill_x_pos + 380,
+      backHills[i].valley_y_pos - 10
     );
   }
 }
@@ -1256,7 +1256,7 @@ function startGame() {
     },
   ];
 
-  MidHills = [
+  midHills = [
     {
       valley_x_pos: 0,
       valley_y_pos: floorPos_y - 20,
@@ -1289,7 +1289,7 @@ function startGame() {
     },
   ];
 
-  BackHills = [
+  backHills = [
     {
       valley_x_pos: 50,
       valley_y_pos: floorPos_y - 60,
