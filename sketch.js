@@ -1470,7 +1470,7 @@ function createExtraLife(x, y) {
       );
     },
     checkContact: function (gc_x, gc_y) {
-      if (dist(gc_x, gc_y, this.x + 75, this.y + 70) < 30) {
+      if (dist(gc_x, gc_y, this.x + 75, this.y + 70) < 50) {
         return true;
       }
     },
