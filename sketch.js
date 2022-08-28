@@ -6,6 +6,10 @@ The Game Project 7/8 - Make it awesome!
 //
 var gameState;
 var gameOver;
+var charColor;
+var charGold;
+var charRed;
+var colorCount;
 // -----------
 // Positioning
 // -----------
@@ -104,9 +108,9 @@ function setup() {
 }
 
 function draw() {
-  // --------------------------------------
-  // Draw background, items, and character.
-  // --------------------------------------
+  // ---------------
+  // Draw background
+  // ---------------
 
   background("#7dd8ea"); // fill the sky blue
 
@@ -133,10 +137,16 @@ function draw() {
 
   drawTrees();
 
+  // --------------------------------------------
+  // Draw interactive objects and game character.
+  // --------------------------------------------
+
+  // Draw the platforms.
   for (let i = 0; i < platforms.length; i++) {
     platforms[i].draw();
   }
 
+  // Draw extra lifes and check if player collects them.
   for (let i = 0; i < extraLife.length; i++) {
     if (extraLife.length > 0) {
       extraLife[i].draw();
@@ -147,6 +157,18 @@ function draw() {
           lifes++;
         }
       }
+    }
+  }
+  // If player collects life, momentarily turn the character
+  // into a red color.
+  if (charRed) {
+    colorCount++;
+    if (colorCount < 7) {
+      charColor = "#C91916";
+    } else {
+      charColor = "AliceWhite";
+      colorCount = 0;
+      charRed = false;
     }
   }
 
@@ -163,18 +185,31 @@ function draw() {
       checkCollectable(collectables[i]);
     }
   }
+  // If player collects item, momentarily turn the character
+  // into a gold color.
+  if (charGold) {
+    colorCount++;
+    if (colorCount < 7) {
+      charColor = "gold";
+    } else {
+      charColor = "AliceWhite";
+      colorCount = 0;
+      charGold = false;
+    }
+  }
 
   drawCabin();
 
   // Draw flagpole and check if player reaches flagpole.
   renderFlagpole();
-  //
   if (flagpole.isReached == false) {
     checkFlagpole();
   }
 
   pop(); // End scrolling background.
 
+  // If the game is over, remove the collectable counter and life
+  // counter, and stop the draw() function from looping.
   if (!gameOver) {
     drawCollectableCounter();
     for (var i = 0; i < lifes; i++) {
@@ -192,7 +227,7 @@ function draw() {
   // Draw water animation in canyon.
   for (var i = 0; i < canyons.length; i++) {
     drawWater(canyons[i], water_array[i], water_cycle[i]);
-    // Run and reset water animations.
+    // Run and reset water animation.
     if (water_cycle[i] > 15) {
       water_cycle[i] = 0;
     } else {
@@ -201,9 +236,9 @@ function draw() {
   }
   pop(); // End scrolling background.
 
-  // -----------------------------
-  // Logic for character movement.
-  // -----------------------------
+  // ---------------------------------------------
+  // Logic for character movement and interaction.
+  // ---------------------------------------------
 
   // Function for character movement and positioning.
   moveGameChar();
@@ -224,7 +259,8 @@ function draw() {
     winGame();
   }
 
-  drawBeginButton();
+  // For very first instance, draw a button to start the game.
+  drawStartButton();
 }
 
 // ---------------------
@@ -233,20 +269,20 @@ function draw() {
 
 function keyPressed() {
   // left arrow
-  if (keyCode == 37 && gameState == "begin") {
+  if (keyCode == 37 && gameState == "start") {
     isLeft = true;
   }
 
   // right arrow
-  if (keyCode == 39 && gameState == "begin") {
+  if (keyCode == 39 && gameState == "start") {
     isRight = true;
   }
 
   // space bar
   if (
-    keyCode == 32 ||
-    keyCode == 231 ||
-    (keyCode == 0 && gameState == "begin")
+    (keyCode == 32 && gameState == "start") ||
+    (keyCode == 231 && gameState == "start") ||
+    (keyCode == 0 && gameState == "start")
   ) {
     if (!isFalling) {
       gameChar_y -= 100;
@@ -276,7 +312,7 @@ function mouseClicked() {
   // can't be in the same spot as above
   rect(50, 307, 106, 36, 10);
   if (mouseX > 50 && mouseX < 156 && mouseY > 307 && mouseY < 343) {
-    beginButton();
+    startButton();
   }
 }
 
@@ -285,7 +321,6 @@ function mouseClicked() {
 // ------------------------------
 
 function drawGameChar() {
-  let charColor = "AliceBlue";
   if (isLeft && isFalling) {
     // jumping-left
     fill(charColor);
@@ -1146,6 +1181,7 @@ function checkCollectable(t_collectable) {
     t_collectable.isFound = true;
     game_score += 1;
     coinSound.play();
+    charGold = true;
   }
 }
 
@@ -1175,6 +1211,10 @@ function startGame() {
   gameOver = false;
   gameChar_x = 100;
   gameChar_y = floorPos_y;
+  charColor = "AliceBlue";
+  charGold = false;
+  charRed = false;
+  colorCount = 0;
   // Variable to control the background scrolling.
   scrollPos = 0;
 
@@ -1413,7 +1453,7 @@ function startGame() {
   ];
 }
 
-function drawBeginButton() {
+function drawStartButton() {
   if (gameState == "waiting") {
     fill("black");
     textSize(24);
@@ -1426,9 +1466,9 @@ function drawBeginButton() {
     text("Begin Game", 60, 330);
   }
 }
-function beginButton() {
+function startButton() {
   // Set game state to start.
-  gameState = "begin";
+  gameState = "start";
   gameSound.loop();
 }
 
@@ -1470,7 +1510,8 @@ function createExtraLife(x, y) {
       );
     },
     checkContact: function (gc_x, gc_y) {
-      if (dist(gc_x, gc_y, this.x + 75, this.y + 70) < 50) {
+      if (dist(gc_x, gc_y, this.x + 75, this.y + 70) < 30) {
+        charRed = true;
         return true;
       }
     },
