@@ -49,7 +49,7 @@ var platforms;
 // ---------------
 // Water animation
 // ---------------
-var water_array = [];
+var water_array;
 var water_cycle;
 var img;
 
@@ -57,6 +57,7 @@ var img;
 // Enemies
 // -------
 var enemies;
+var enemyImgArray = [];
 
 // ------
 // Sounds
@@ -68,8 +69,11 @@ var gameSound;
 var coinSound;
 var achievementSound;
 
-// Preload font used in game.
 function preload() {
+  for (var i = 0; i < 25; i++) {
+    enemyImgArray[i] = loadImage("assets/enemy/enemy" + i + ".png");
+  }
+
   fontRobotoBold = loadFont("assets/Roboto-Bold.ttf");
 
   soundFormats("mp3", "wav");
@@ -206,6 +210,14 @@ function draw() {
     checkFlagpole();
   }
 
+  // Draw enemies and check if player is hit by enemy.
+  for (var i = 0; i < enemies.length; i++) {
+    enemies[i].draw();
+    if (enemies[i].checkContact(gameChar_world_x, gameChar_y)) {
+      playerDie();
+    }
+  }
+
   pop(); // End scrolling background.
 
   // If the game is over, remove the collectable counter and life
@@ -223,6 +235,7 @@ function draw() {
 
   push();
   translate(scrollPos, 0); // Implement scrolling background.
+
   // These objects need to go in front of the character.
   // Draw water animation in canyon.
   for (var i = 0; i < canyons.length; i++) {
@@ -244,7 +257,9 @@ function draw() {
   moveGameChar();
 
   // Check if the player falls into a canyon and dies.
-  checkPlayerDie();
+  if (gameChar_y > height + 100) {
+    playerDie();
+  }
 
   // If the player loses all his lifes, then the game is over.
   if (lifes < 1) {
@@ -259,7 +274,7 @@ function draw() {
     winGame();
   }
 
-  // For very first instance, draw a button to start the game.
+  // For very first instance of game, draw a button to start the game.
   drawStartButton();
 }
 
@@ -790,9 +805,9 @@ function drawTrees() {
   for (var i = 0; i < trees_x.length; i++) {
     // trunk
     fill("#8b4513");
-    rect(trees_x[i] - 15, floorPos_y - 40, 30, 40);
+    rect(trees_x[i] - 15, floorPos_y - 40, 30, 28);
     fill("#996633");
-    rect(trees_x[i] - 15, floorPos_y - 40, 5, 40);
+    rect(trees_x[i] - 15, floorPos_y - 40, 5, 28);
     // leaves
     fill("#005625");
     triangle(
@@ -1209,13 +1224,15 @@ function drawCollectableCounter() {
 function startGame() {
   gameState = "waiting";
   gameOver = false;
+  // Variables to set the characters initial position
   gameChar_x = 100;
   gameChar_y = floorPos_y;
+  // Variables to control the character's color
   charColor = "AliceBlue";
   charGold = false;
   charRed = false;
   colorCount = 0;
-  // Variable to control the background scrolling.
+  // Variable to control the background scrolling
   scrollPos = 0;
 
   // Boolean variables to control the movement of the game character.
@@ -1239,7 +1256,7 @@ function startGame() {
   // Variable to hold flagpole object.
   flagpole = { isReached: false, x_pos: 1520, flag_height: 300 };
 
-  // Variable for cabin y position.
+  // X and Y position of cabin
   cabin = {
     y: 20,
     x: 1024,
@@ -1248,6 +1265,7 @@ function startGame() {
   // Initialise arrays of background/foreground objects.
   trees_x = [230, 530, 740, 1080, 1380];
 
+  // X, Y, width, and height of clouds
   clouds = [
     {
       x_pos: 280,
@@ -1275,6 +1293,7 @@ function startGame() {
     },
   ];
 
+  // X, Y, width, and height of mountains
   mountains = [
     {
       x_pos: 400,
@@ -1296,6 +1315,7 @@ function startGame() {
     },
   ];
 
+  // X, Y, width and height of hills
   midHills = [
     {
       valley_x_pos: 0,
@@ -1329,6 +1349,7 @@ function startGame() {
     },
   ];
 
+  // X, Y, width and height of hills
   backHills = [
     {
       valley_x_pos: 50,
@@ -1372,6 +1393,7 @@ function startGame() {
     },
   ];
 
+  // X position and width of canyons
   canyons = [
     {
       x_pos: 348,
@@ -1387,19 +1409,20 @@ function startGame() {
     },
   ];
 
-  platforms = [];
-
-  extraLife = [];
-
+  // Enemy constructor
   enemies = [];
+  enemies.push(new Enemy(500, floorPos_y - 10, 100, enemyImgArray));
+  enemies.push(new Enemy(1350, floorPos_y - 10, 100, enemyImgArray));
 
   // platform factory
+  platforms = [];
   platforms.push(createPlatforms(1210, floorPos_y - 50, 40));
   platforms.push(createPlatforms(600, floorPos_y - 50, 40));
   platforms.push(createPlatforms(665, floorPos_y - 106, 40));
   platforms.push(createPlatforms(780, floorPos_y - 146, 40));
 
   // extra life factory
+  extraLife = [];
   extraLife.push(createExtraLife(775, floorPos_y - 255));
   extraLife.push(createExtraLife(985, floorPos_y - 135));
 
@@ -1416,6 +1439,7 @@ function startGame() {
     createWaterImgArray(water_array[i]);
   }
 
+  // X, Y, size, and status of collectable items.
   collectables = [
     {
       x_pos: 460,
@@ -1437,6 +1461,7 @@ function startGame() {
     },
   ];
 
+  // X and Y positions of life icons.
   lifeCounter = [
     {
       x_pos: 790,
@@ -1453,6 +1478,7 @@ function startGame() {
   ];
 }
 
+// Draw the start buttion
 function drawStartButton() {
   if (gameState == "waiting") {
     fill("black");
@@ -1472,6 +1498,7 @@ function startButton() {
   gameSound.loop();
 }
 
+// Extra life factory
 function createExtraLife(x, y) {
   life = {
     x: x,
@@ -1554,18 +1581,16 @@ function drawLifeCounter(t_life) {
 }
 
 // Function to check if the player has died.
-function checkPlayerDie() {
+function playerDie() {
   // Restart the player's position and subtract a life after a fall into the canyon.
-  if (gameChar_y > height + 100) {
-    scrollPos = 0;
-    gameChar_x = 100;
-    gameChar_y = floorPos_y;
-    isPlummeting = false;
-    game_score = 0;
-    lifes -= 1;
-    for (var i = 0; i < collectables.length; i++) {
-      collectables[i].isFound = false;
-    }
+  scrollPos = 0;
+  gameChar_x = 100;
+  gameChar_y = floorPos_y;
+  isPlummeting = false;
+  game_score = 0;
+  lifes -= 1;
+  for (var i = 0; i < collectables.length; i++) {
+    collectables[i].isFound = false;
   }
 }
 
@@ -1653,10 +1678,12 @@ function playAgain() {
   for (var i = 0; i < collectables.length; i++) {
     collectables[i].isFound = false;
   }
+  // Restart extra life factory
   extraLife.push(createExtraLife(775, floorPos_y - 255));
   extraLife.push(createExtraLife(985, floorPos_y - 135));
 }
 
+// Platform factory function
 function createPlatforms(x, y, length) {
   var p = {
     x: x,
@@ -1683,4 +1710,43 @@ function createPlatforms(x, y, length) {
   return p;
 }
 
-function Enemies() {}
+// Enemy constructor function
+function Enemy(x, y, range, imgArray) {
+  this.x = x;
+  this.y = y;
+  this.range = range;
+  this.imgArray = imgArray;
+
+  this.cycle = 0;
+  this.currentX = x;
+  this.inc = 1;
+
+  this.update = function () {
+    this.currentX += this.inc;
+
+    if (this.currentX >= this.x + this.range) {
+      this.inc = -1;
+    } else if (this.currentX < this.x) {
+      this.inc = 1;
+    }
+  };
+
+  this.draw = function () {
+    this.update();
+    image(this.imgArray[this.cycle], this.currentX - 50, this.y - 60, 100, 100);
+    if (this.cycle < this.imgArray.length - 1) {
+      this.cycle++;
+    } else {
+      this.cycle = 0;
+    }
+  };
+
+  this.checkContact = function (gc_x, gc_y) {
+    var d = dist(gc_x, gc_y, this.currentX, this.y);
+    if (d < 20) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+}
