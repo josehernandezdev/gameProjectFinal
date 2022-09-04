@@ -64,7 +64,7 @@ var enemyImgArray = [];
 // ------
 var jumpSound;
 var waterSound;
-var deathSound;
+var loseSound;
 var gameSound;
 var coinSound;
 var achievementSound;
@@ -81,9 +81,9 @@ function preload() {
   jumpSound = loadSound("assets/jumpSound.wav");
   jumpSound.setVolume(0.4);
 
-  deathSound = loadSound("assets/deathSound.wav");
-  deathSound.setVolume(0.3);
-  deathSound.playMode("restart");
+  loseSound = loadSound("assets/loseSound.wav");
+  loseSound.setVolume(0.3);
+  loseSound.playMode("restart");
 
   gameSound = loadSound("assets/game.mp3");
   gameSound.setVolume(0.3);
@@ -1478,7 +1478,7 @@ function startGame() {
   ];
 }
 
-// Draw the start buttion
+// Draw the start button
 function drawStartButton() {
   if (gameState == "waiting") {
     fill("black");
@@ -1545,6 +1545,7 @@ function createExtraLife(x, y) {
   };
   return life;
 }
+
 // Function to draw life counter.
 function drawLifeCounter(t_life) {
   fill("#C91916");
@@ -1580,9 +1581,8 @@ function drawLifeCounter(t_life) {
   );
 }
 
-// Function to check if the player has died.
+// Function for when the player has died.
 function playerDie() {
-  // Restart the player's position and subtract a life after a fall into the canyon.
   scrollPos = 0;
   gameChar_x = 100;
   gameChar_y = floorPos_y;
@@ -1620,7 +1620,7 @@ function loseGame() {
   textSize(18);
   text("Try Again", 483, 330);
   gameSound.stop();
-  deathSound.play();
+  loseSound.play();
   return;
 }
 
