@@ -64,13 +64,21 @@ var enemyImgArray = [];
 // ------
 var jumpSound;
 var waterSound;
-var loseSound;
+var deathSound;
 var gameSound;
 var coinSound;
 var achievementSound;
 
+// ------------------
+// Font for the game.
+// ------------------
+var fontRobotoBold;
+
 function preload() {
+  // There are 25 images for the enemy animation.
   for (var i = 0; i < 25; i++) {
+    // Naming convention for the images:
+    // enemy1.png, enemy2.png, enemy3.png, etc.
     enemyImgArray[i] = loadImage("assets/enemy/enemy" + i + ".png");
   }
 
@@ -81,9 +89,9 @@ function preload() {
   jumpSound = loadSound("assets/jumpSound.wav");
   jumpSound.setVolume(0.4);
 
-  loseSound = loadSound("assets/loseSound.wav");
-  loseSound.setVolume(0.3);
-  loseSound.playMode("restart");
+  deathSound = loadSound("assets/deathSound.wav");
+  deathSound.setVolume(0.3);
+  deathSound.playMode("restart");
 
   gameSound = loadSound("assets/game.mp3");
   gameSound.setVolume(0.3);
@@ -324,7 +332,7 @@ function mouseClicked() {
     playAgain();
     loop();
   }
-  // can't be in the same spot as above
+  // If the player clicks the mouse when over the start button, start the game.
   rect(50, 307, 106, 36, 10);
   if (mouseX > 50 && mouseX < 156 && mouseY > 307 && mouseY < 343) {
     startButton();
@@ -490,6 +498,7 @@ function drawGameChar() {
 // ----------------------------------------------
 // Game character movement and position function.
 // ----------------------------------------------
+
 function moveGameChar() {
   // Make the character run left.
   if (isLeft) {
@@ -1136,7 +1145,7 @@ function checkCanyon(t_canyon) {
 
 // Function to create array of image objects for water animation.
 function createWaterImgArray(t_water_array) {
-  // There are 17 images.
+  // There are 17 images for the water animation.
   for (var i = 0; i < 17; i++) {
     // Naming convention for the images:
     // image 1.png, image 2.png, image 3.png, etc.
@@ -1246,10 +1255,6 @@ function startGame() {
   // Boolean variable to control appearance of collectable items.
   isFound = false;
 
-  // Variable to cycle through walking animation.
-  walkLeftCycle = 0;
-  walkRightCycle = 0;
-
   // Variable to count collectable items.
   game_score = 0;
 
@@ -1263,6 +1268,8 @@ function startGame() {
   };
 
   // Initialise arrays of background/foreground objects.
+
+  // X position of trees
   trees_x = [230, 530, 740, 1080, 1380];
 
   // X, Y, width, and height of clouds
@@ -1480,11 +1487,11 @@ function startGame() {
 
 // Draw the start button
 function drawStartButton() {
+  noStroke();
   if (gameState == "waiting") {
     fill("black");
     textSize(24);
     text("Click", 75, 300);
-    rect(50, 307, 106, 36, 10);
     fill("#0FCAFF");
     rect(53, 310, 100, 30, 10);
     fill("white");
@@ -1620,7 +1627,7 @@ function loseGame() {
   textSize(18);
   text("Try Again", 483, 330);
   gameSound.stop();
-  loseSound.play();
+  deathSound.play();
   return;
 }
 
@@ -1682,6 +1689,10 @@ function playAgain() {
   extraLife.push(createExtraLife(775, floorPos_y - 255));
   extraLife.push(createExtraLife(985, floorPos_y - 135));
 }
+
+// ----------------------------------------
+// Functions to create interactive objects.
+// ----------------------------------------
 
 // Platform factory function
 function createPlatforms(x, y, length) {
